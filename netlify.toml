@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 7 要求 Node 20.19+,显式固定为 22
+  NODE_VERSION = "22"
