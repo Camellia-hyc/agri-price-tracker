@@ -1,43 +1,10 @@
-name: 每日爬取农价数据
+name: test
 
 on:
-  schedule:
-    # 每天 23:07 UTC = 北京时间次日 07:07(农业农村部官网凌晨更新完当日行情后爬取)
-    - cron: "7 23 * * *"
-  workflow_dispatch: # 支持在 GitHub 网页上手动触发
-
-permissions:
-  contents: write # 允许把新数据 push 回仓库
+  workflow_dispatch:
 
 jobs:
-  crawl:
+  t:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出仓库
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # 完整历史,否则无法 push
-
-      - name: 安装 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: 安装依赖
-        run: npm ci
-
-      - name: 运行爬虫
-        run: node scripts/crawl-pfsc.mjs
-
-      - name: 提交新数据
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/mock data/history
-          if git diff --cached --quiet; then
-            echo "数据无变化,跳过提交"
-          else
-            git commit -m "chore: 更新行情数据 $(date +%F)"
-            git push
-          fi
+      - run: echo hi
