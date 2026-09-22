@@ -17,7 +17,6 @@ import StatCards, { type StatCardData } from "@/components/trend/StatCards"
 import TrendChart from "@/components/trend/TrendChart"
 
 const DEFAULT_PRODUCTS = ["pork", "egg", "cabbage"]
-const DEFAULT_MARKET = "bj_xinfadi"
 
 export default function TrendAnalysis() {
   const [products, setProducts] = useState<Product[]>([])
@@ -27,7 +26,7 @@ export default function TrendAnalysis() {
 
   const [selectedProductIds, setSelectedProductIds] =
     useState<string[]>(DEFAULT_PRODUCTS)
-  const [selectedMarketId, setSelectedMarketId] = useState(DEFAULT_MARKET)
+  const [selectedMarketId, setSelectedMarketId] = useState("")
   const [rangeDays, setRangeDays] = useState<RangeDays>(30)
 
   useEffect(() => {
@@ -38,6 +37,10 @@ export default function TrendAnalysis() {
         setProducts(ps)
         setMarkets(ms)
         setAllPrices(prices)
+        // 市场 id 由爬虫生成,可能变化:默认市场失效时回退到第一个真实市场
+        setSelectedMarketId((prev) =>
+          ms.some((m) => m.id === prev) ? prev : (ms[0]?.id ?? ""),
+        )
       })
       .catch((e) => setError(e instanceof Error ? e.message : "数据加载失败"))
     return () => {

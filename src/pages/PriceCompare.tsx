@@ -16,13 +16,8 @@ import CompareChart, { type CompareDatum } from "@/components/compare/CompareCha
 import CompareTable from "@/components/compare/CompareTable"
 
 const DEFAULT_PRODUCTS = ["pork", "egg", "cabbage"]
-const DEFAULT_MARKETS = [
-  "bj_xinfadi",
-  "sh_jiangqiao",
-  "gz_jiangnan",
-  "cd_sanlian",
-  "xa_xinqiao",
-]
+// 默认选中市场个数;具体 id 由数据加载后按 markets.json 动态确定(市场 id 由爬虫生成,可能变化)
+const DEFAULT_MARKET_COUNT = 5
 
 export default function PriceCompare() {
   const [products, setProducts] = useState<Product[]>([])
@@ -32,8 +27,7 @@ export default function PriceCompare() {
 
   const [selectedProductIds, setSelectedProductIds] =
     useState<string[]>(DEFAULT_PRODUCTS)
-  const [selectedMarketIds, setSelectedMarketIds] =
-    useState<string[]>(DEFAULT_MARKETS)
+  const [selectedMarketIds, setSelectedMarketIds] = useState<string[]>([])
   const [date, setDate] = useState("")
 
   useEffect(() => {
@@ -44,6 +38,13 @@ export default function PriceCompare() {
         setProducts(ps)
         setMarkets(ms)
         setAllPrices(prices)
+        // 清理失效的市场 id,空选择时默认选前 DEFAULT_MARKET_COUNT 个真实市场
+        setSelectedMarketIds((prev) => {
+          const valid = prev.filter((id) => ms.some((m) => m.id === id))
+          return valid.length
+            ? valid
+            : ms.slice(0, DEFAULT_MARKET_COUNT).map((m) => m.id)
+        })
         // 默认展示最新一天
         setDate(prices.reduce((a, r) => (r.date > a ? r.date : a), prices[0].date))
       })

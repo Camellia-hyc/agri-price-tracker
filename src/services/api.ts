@@ -8,7 +8,8 @@ const MOCK_BASE = `${import.meta.env.BASE_URL}mock`
 let pricesCache: PriceRecord[] | null = null
 
 async function fetchJson<T>(path: string): Promise<T> {
-  const res = await fetch(`${MOCK_BASE}/${path}`)
+  // no-store:数据文件会被爬虫更新,避免浏览器缓存旧数据
+  const res = await fetch(`${MOCK_BASE}/${path}`, { cache: "no-store" })
   if (!res.ok) {
     throw new Error(`加载 ${path} 失败:${res.status}`)
   }

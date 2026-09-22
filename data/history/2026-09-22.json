@@ -1,0 +1,529 @@
+{
+  "date": "2026-09-22",
+  "markets": [
+    {
+      "id": "bj_564be9aa",
+      "name": "北京新发地农副产品批发市场信息中心",
+      "city": "北京",
+      "region": "华北"
+    },
+    {
+      "id": "sh_3a0d82e2",
+      "name": "上海农产品中心批发市场经营管理有限公司",
+      "city": "上海",
+      "region": "华东"
+    },
+    {
+      "id": "gz_643d336d",
+      "name": "广州江南果菜批发市场经营管理有限公司",
+      "city": "广州",
+      "region": "华南"
+    },
+    {
+      "id": "hz_18c542c2",
+      "name": "杭州农副产品物流中心南庄兜农产品批发市场",
+      "city": "杭州",
+      "region": "华东"
+    },
+    {
+      "id": "zz_69700c44",
+      "name": "河南万邦国际农产品物流股份有限公司",
+      "city": "郑州",
+      "region": "华中"
+    },
+    {
+      "id": "wh_8795aa3b",
+      "name": "武汉白沙洲农副产品大市场有限公司",
+      "city": "武汉",
+      "region": "华中"
+    },
+    {
+      "id": "cd_ffac921e",
+      "name": "四川成都农产品中心批发市场",
+      "city": "成都",
+      "region": "西南"
+    },
+    {
+      "id": "xa_9baa00d4",
+      "name": "陕西朱雀实业集团有限公司",
+      "city": "西安",
+      "region": "西北"
+    },
+    {
+      "id": "sy_aa5b8840",
+      "name": "沈阳盛发菜果批发有限公司",
+      "city": "沈阳",
+      "region": "东北"
+    }
+  ],
+  "records": [
+    {
+      "productId": "cabbage",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 0.85
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "sy_aa5b8840",
+      "date": "2026-09-22",
+      "price": 1.6
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 2.2
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "hz_18c542c2",
+      "date": "2026-09-22",
+      "price": 2
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 1.15
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-22",
+      "price": 1.7
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-22",
+      "price": 2.5
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 1.2
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 1.3
+    },
+    {
+      "productId": "tomato",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 3.1
+    },
+    {
+      "productId": "tomato",
+      "marketId": "sy_aa5b8840",
+      "date": "2026-09-22",
+      "price": 3.2
+    },
+    {
+      "productId": "tomato",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 2.1
+    },
+    {
+      "productId": "tomato",
+      "marketId": "hz_18c542c2",
+      "date": "2026-09-22",
+      "price": 5
+    },
+    {
+      "productId": "tomato",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 3.7
+    },
+    {
+      "productId": "tomato",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-22",
+      "price": 3.7
+    },
+    {
+      "productId": "tomato",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-22",
+      "price": 3.2
+    },
+    {
+      "productId": "tomato",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 2.4
+    },
+    {
+      "productId": "tomato",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 2.6
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 2
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "sy_aa5b8840",
+      "date": "2026-09-22",
+      "price": 5
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 2.3
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "hz_18c542c2",
+      "date": "2026-09-22",
+      "price": 5.5
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 4.5
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-22",
+      "price": 4.35
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-22",
+      "price": 3.7
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 5
+    },
+    {
+      "productId": "potato",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 1.9
+    },
+    {
+      "productId": "potato",
+      "marketId": "sy_aa5b8840",
+      "date": "2026-09-22",
+      "price": 2.2
+    },
+    {
+      "productId": "potato",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 1.7
+    },
+    {
+      "productId": "potato",
+      "marketId": "hz_18c542c2",
+      "date": "2026-09-22",
+      "price": 3
+    },
+    {
+      "productId": "potato",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 2
+    },
+    {
+      "productId": "potato",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-22",
+      "price": 2.4
+    },
+    {
+      "productId": "potato",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-22",
+      "price": 2.2
+    },
+    {
+      "productId": "potato",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 2
+    },
+    {
+      "productId": "potato",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 1.6
+    },
+    {
+      "productId": "banana",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 4.7
+    },
+    {
+      "productId": "banana",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 5.2
+    },
+    {
+      "productId": "banana",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 4
+    },
+    {
+      "productId": "banana",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-22",
+      "price": 5.5
+    },
+    {
+      "productId": "banana",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 4.7
+    },
+    {
+      "productId": "watermelon",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 3.04
+    },
+    {
+      "productId": "watermelon",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 3.5
+    },
+    {
+      "productId": "watermelon",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-22",
+      "price": 3.85
+    },
+    {
+      "productId": "watermelon",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 4.5
+    },
+    {
+      "productId": "rice",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 5.76
+    },
+    {
+      "productId": "corn",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 5
+    },
+    {
+      "productId": "pork",
+      "marketId": "hz_18c542c2",
+      "date": "2026-09-22",
+      "price": 16.8
+    },
+    {
+      "productId": "pork",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 16.5
+    },
+    {
+      "productId": "beef",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 65
+    },
+    {
+      "productId": "beef",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 80.24
+    },
+    {
+      "productId": "beef",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 67
+    },
+    {
+      "productId": "beef",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 64
+    },
+    {
+      "productId": "beef",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 66
+    },
+    {
+      "productId": "mutton",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 53.5
+    },
+    {
+      "productId": "mutton",
+      "marketId": "sh_3a0d82e2",
+      "date": "2026-09-22",
+      "price": 63.7
+    },
+    {
+      "productId": "mutton",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 69
+    },
+    {
+      "productId": "mutton",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 60
+    },
+    {
+      "productId": "mutton",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 63
+    },
+    {
+      "productId": "egg",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 10.55
+    },
+    {
+      "productId": "egg",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 10.8
+    },
+    {
+      "productId": "egg",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 11.5
+    },
+    {
+      "productId": "carp",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 12
+    },
+    {
+      "productId": "carp",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 13.5
+    },
+    {
+      "productId": "carp",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-22",
+      "price": 10.02
+    },
+    {
+      "productId": "carp",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 12
+    },
+    {
+      "productId": "carp",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 20.5
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 18.8
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 16.5
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-22",
+      "price": 12.24
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 14
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 21
+    },
+    {
+      "productId": "crucian",
+      "marketId": "bj_564be9aa",
+      "date": "2026-09-22",
+      "price": 24
+    },
+    {
+      "productId": "crucian",
+      "marketId": "hz_18c542c2",
+      "date": "2026-09-22",
+      "price": 19
+    },
+    {
+      "productId": "crucian",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 16
+    },
+    {
+      "productId": "crucian",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-22",
+      "price": 15
+    },
+    {
+      "productId": "crucian",
+      "marketId": "cd_ffac921e",
+      "date": "2026-09-22",
+      "price": 19
+    },
+    {
+      "productId": "crucian",
+      "marketId": "xa_9baa00d4",
+      "date": "2026-09-22",
+      "price": 21.5
+    },
+    {
+      "productId": "shrimp",
+      "marketId": "zz_69700c44",
+      "date": "2026-09-22",
+      "price": 51
+    }
+  ]
+}

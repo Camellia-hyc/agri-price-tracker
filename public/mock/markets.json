@@ -1,61 +1,55 @@
 [
   {
-    "id": "bj_xinfadi",
-    "name": "北京新发地批发市场",
+    "id": "bj_564be9aa",
+    "name": "北京新发地农副产品批发市场信息中心",
     "city": "北京",
     "region": "华北"
   },
   {
-    "id": "sh_jiangqiao",
-    "name": "上海江桥批发市场",
+    "id": "sh_3a0d82e2",
+    "name": "上海农产品中心批发市场经营管理有限公司",
     "city": "上海",
     "region": "华东"
   },
   {
-    "id": "gz_jiangnan",
-    "name": "广州江南果菜批发市场",
+    "id": "gz_643d336d",
+    "name": "广州江南果菜批发市场经营管理有限公司",
     "city": "广州",
     "region": "华南"
   },
   {
-    "id": "sz_haijixing",
-    "name": "深圳海吉星农批市场",
-    "city": "深圳",
-    "region": "华南"
-  },
-  {
-    "id": "hz_nongdu",
-    "name": "杭州农副产品物流中心",
+    "id": "hz_18c542c2",
+    "name": "杭州农副产品物流中心南庄兜农产品批发市场",
     "city": "杭州",
     "region": "华东"
   },
   {
-    "id": "zz_wanbang",
-    "name": "郑州万邦国际农产品物流城",
+    "id": "zz_69700c44",
+    "name": "河南万邦国际农产品物流股份有限公司",
     "city": "郑州",
     "region": "华中"
   },
   {
-    "id": "wh_baishazhou",
-    "name": "武汉白沙洲农副产品大市场",
+    "id": "wh_8795aa3b",
+    "name": "武汉白沙洲农副产品大市场有限公司",
     "city": "武汉",
     "region": "华中"
   },
   {
-    "id": "cd_sanlian",
-    "name": "成都农产品中心批发市场",
+    "id": "cd_ffac921e",
+    "name": "四川成都农产品中心批发市场",
     "city": "成都",
     "region": "西南"
   },
   {
-    "id": "xa_xinqiao",
-    "name": "西安欣桥农产品批发市场",
+    "id": "xa_9baa00d4",
+    "name": "陕西朱雀实业集团有限公司",
     "city": "西安",
     "region": "西北"
   },
   {
-    "id": "sy_shierxian",
-    "name": "沈阳十二线蔬菜批发市场",
+    "id": "sy_aa5b8840",
+    "name": "沈阳盛发菜果批发有限公司",
     "city": "沈阳",
     "region": "东北"
   }
