@@ -1,0 +1,115 @@
+{
+  "date": "2026-09-25",
+  "markets": [
+    {
+      "id": "gz_90609211",
+      "name": "广东汕头农副产品批发中心市场",
+      "city": "广州",
+      "region": "华南"
+    },
+    {
+      "id": "wh_5f30a9b7",
+      "name": "湖北浠水农产品批发市场",
+      "city": "武汉",
+      "region": "华中"
+    }
+  ],
+  "records": [
+    {
+      "productId": "cabbage",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 2.6
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "gz_90609211",
+      "date": "2026-09-25",
+      "price": 3
+    },
+    {
+      "productId": "tomato",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 6.5
+    },
+    {
+      "productId": "tomato",
+      "marketId": "gz_90609211",
+      "date": "2026-09-25",
+      "price": 4.1
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 4.5
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "gz_90609211",
+      "date": "2026-09-25",
+      "price": 3.9
+    },
+    {
+      "productId": "potato",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 2.6
+    },
+    {
+      "productId": "potato",
+      "marketId": "gz_90609211",
+      "date": "2026-09-25",
+      "price": 3.8
+    },
+    {
+      "productId": "banana",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 8.3
+    },
+    {
+      "productId": "pork",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 21.8
+    },
+    {
+      "productId": "beef",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 72.4
+    },
+    {
+      "productId": "mutton",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 67.4
+    },
+    {
+      "productId": "egg",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 11.1
+    },
+    {
+      "productId": "carp",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 13.5
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 15.1
+    },
+    {
+      "productId": "crucian",
+      "marketId": "wh_5f30a9b7",
+      "date": "2026-09-25",
+      "price": 20.2
+    }
+  ]
+}
