@@ -1,0 +1,97 @@
+{
+  "date": "2026-09-27",
+  "markets": [
+    {
+      "id": "gz_643d336d",
+      "name": "广州江南果菜批发市场经营管理有限公司",
+      "city": "广州",
+      "region": "华南"
+    },
+    {
+      "id": "wh_8795aa3b",
+      "name": "武汉白沙洲农副产品大市场有限公司",
+      "city": "武汉",
+      "region": "华中"
+    }
+  ],
+  "records": [
+    {
+      "productId": "cabbage",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-27",
+      "price": 2.2
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-27",
+      "price": 2.35
+    },
+    {
+      "productId": "tomato",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-27",
+      "price": 4
+    },
+    {
+      "productId": "tomato",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-27",
+      "price": 3.2
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-27",
+      "price": 3.65
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-27",
+      "price": 3.1
+    },
+    {
+      "productId": "potato",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-27",
+      "price": 2.4
+    },
+    {
+      "productId": "potato",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-27",
+      "price": 2.3
+    },
+    {
+      "productId": "banana",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-27",
+      "price": 4
+    },
+    {
+      "productId": "watermelon",
+      "marketId": "gz_643d336d",
+      "date": "2026-09-27",
+      "price": 3.93
+    },
+    {
+      "productId": "carp",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-27",
+      "price": 10.05
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-27",
+      "price": 12.15
+    },
+    {
+      "productId": "crucian",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-09-27",
+      "price": 15.53
+    }
+  ]
+}
