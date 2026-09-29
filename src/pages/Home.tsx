@@ -7,6 +7,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import SearchBar from "@/components/home/SearchBar"
 import CategoryGrid from "@/components/home/CategoryGrid"
 import MoverList, { type MoverRow } from "@/components/home/MoverList"
+import TodayPrices from "@/components/home/TodayPrices"
+
+/** 「今日行情」展示的高频品种,数组顺序即展示顺序 */
+const HOT_PRODUCT_IDS = ["pork", "egg", "cabbage", "tomato", "potato"] as const
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
@@ -59,9 +63,14 @@ export default function Home() {
     }
   }, [scrollTarget, products, allPrices])
 
-  // 异动榜:最新两日的全市场均价涨跌
-  const { gainers, losers } = useMemo(() => {
-    const empty = { gainers: [] as MoverRow[], losers: [] as MoverRow[] }
+  // 异动榜 + 今日行情:最新两日的全市场均价涨跌
+  const { gainers, losers, hotRows, lastDate } = useMemo(() => {
+    const empty = {
+      gainers: [] as MoverRow[],
+      losers: [] as MoverRow[],
+      hotRows: [] as MoverRow[],
+      lastDate: "",
+    }
     if (!allPrices || allPrices.length === 0 || products.length === 0) return empty
 
     // date -> productId -> prices
@@ -101,6 +110,10 @@ export default function Home() {
       })
     }
     rows.sort((a, b) => b.changePct - a.changePct)
+    const byId = new Map(rows.map((r) => [r.product.id, r]))
+    const hotRows = HOT_PRODUCT_IDS.map((id) => byId.get(id)).filter(
+      (r): r is MoverRow => r !== undefined,
+    )
     return {
       gainers: rows.filter((r) => r.changePct > 0).slice(0, 5),
       // rows 降序,取负数部分再反转 → 跌幅最大在前
@@ -108,6 +121,8 @@ export default function Home() {
         .filter((r) => r.changePct < 0)
         .reverse()
         .slice(0, 5),
+      hotRows,
+      lastDate: last,
     }
   }, [allPrices, products])
 
@@ -143,6 +158,14 @@ export default function Home() {
         </Card>
       ) : (
         <>
+          <TodayPrices
+            rows={hotRows}
+            lastDate={lastDate}
+            marketCount={markets.length}
+            loading={allPrices === null && !priceError}
+            error={priceError}
+          />
+
           <section id="categories" className="scroll-mt-20 space-y-3">
             <h2 className="text-lg font-semibold">按分类浏览</h2>
             <CategoryGrid products={products} />
