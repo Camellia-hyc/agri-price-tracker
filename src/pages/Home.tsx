@@ -13,21 +13,51 @@ export default function Home() {
   const [markets, setMarkets] = useState<Market[]>([])
   const [allPrices, setAllPrices] = useState<PriceRecord[] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [priceError, setPriceError] = useState<string | null>(null)
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null)
 
+  // 基础数据(产品/市场)是小文件,先就绪 → 搜索框、分类区尽早可用
   useEffect(() => {
     let cancelled = false
-    Promise.all([getProducts(), getMarkets(), getPrices()])
-      .then(([ps, ms, prices]) => {
+    Promise.all([getProducts(), getMarkets()])
+      .then(([ps, ms]) => {
         if (cancelled) return
         setProducts(ps)
         setMarkets(ms)
-        setAllPrices(prices)
       })
       .catch((e) => setError(e instanceof Error ? e.message : "数据加载失败"))
     return () => {
       cancelled = true
     }
   }, [])
+
+  // 价格数据约 1MB,独立加载 → 只影响"价格异动"区,不阻塞搜索与分类
+  useEffect(() => {
+    let cancelled = false
+    getPrices()
+      .then((prices) => {
+        if (cancelled) return
+        setAllPrices(prices)
+      })
+      .catch((e) => {
+        if (cancelled) return
+        setPriceError(e instanceof Error ? e.message : "价格数据加载失败")
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // 首页内锚点跳转(搜索框的"价格异动榜 / 分类浏览")。
+  // 依赖 products/allPrices:目标区块尚未渲染时,数据到达后本 effect 会自动重试
+  useEffect(() => {
+    if (!scrollTarget) return
+    const el = document.getElementById(scrollTarget)
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" })
+      setScrollTarget(null)
+    }
+  }, [scrollTarget, products, allPrices])
 
   // 异动榜:最新两日的全市场均价涨跌
   const { gainers, losers } = useMemo(() => {
@@ -97,7 +127,11 @@ export default function Home() {
           全国主要批发市场农产品价格对比与趋势分析
         </p>
         <div className="mx-auto max-w-xl">
-          <SearchBar products={products} markets={markets} />
+          <SearchBar
+            products={products}
+            markets={markets}
+            onJumpTo={setScrollTarget}
+          />
         </div>
       </section>
 
@@ -109,14 +143,28 @@ export default function Home() {
         </Card>
       ) : (
         <>
-          <section className="space-y-3">
+          <section id="categories" className="scroll-mt-20 space-y-3">
             <h2 className="text-lg font-semibold">按分类浏览</h2>
             <CategoryGrid products={products} />
           </section>
 
-          <section className="space-y-3">
+          <section id="movers" className="scroll-mt-20 space-y-3">
             <h2 className="text-lg font-semibold">价格异动</h2>
-            <MoverList gainers={gainers} losers={losers} />
+            {priceError ? (
+              <Card>
+                <CardContent className="py-8 text-center text-sm text-destructive">
+                  价格数据加载失败:{priceError}
+                </CardContent>
+              </Card>
+            ) : allPrices === null ? (
+              <Card>
+                <CardContent className="py-8 text-center text-sm text-muted-foreground">
+                  价格数据加载中…
+                </CardContent>
+              </Card>
+            ) : (
+              <MoverList gainers={gainers} losers={losers} />
+            )}
           </section>
         </>
       )}
