@@ -335,8 +335,7 @@ export default function TrendAnalysis() {
                     </Link>
                   </CardTitle>
                   <CardDescription>
-                    {scopeText} · {dates[0]} ~ {dates[dates.length - 1]} ·
-                    单位:元/公斤
+                    {scopeText} · {dates[0]} ~ {dates[dates.length - 1]}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

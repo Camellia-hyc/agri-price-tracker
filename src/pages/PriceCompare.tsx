@@ -202,7 +202,7 @@ export default function PriceCompare() {
               <Card>
                 <CardHeader>
                   <CardTitle>各市场价格柱状对比</CardTitle>
-                  <CardDescription>{date} · 单位:元/公斤</CardDescription>
+                  <CardDescription>{date}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <CompareChart data={compareData} products={selectedProducts} />
