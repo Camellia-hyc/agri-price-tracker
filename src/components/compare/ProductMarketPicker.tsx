@@ -5,8 +5,9 @@ import type { Product } from "@/types/product"
 import type { Market } from "@/types/market"
 import ProductPicker from "@/components/shared/ProductPicker"
 
-const MAX_PRODUCTS = 3
-const MAX_MARKETS = 6
+// 导出供 URL 参数解析时截断使用
+export const MAX_PRODUCTS = 3
+export const MAX_MARKETS = 6
 
 interface ProductMarketPickerProps {
   products: Product[]
@@ -86,7 +87,11 @@ export default function ProductMarketPicker({
                   variant={selected ? "default" : "outline"}
                   disabled={disabled}
                   onClick={() => onMarketToggle(m.id)}
-                  title={m.name}
+                  title={
+                    disabled
+                      ? `最多选择 ${MAX_MARKETS} 个市场,先取消一个再选`
+                      : m.name
+                  }
                   className="h-7 px-2.5 text-xs"
                 >
                   {m.city}

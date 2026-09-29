@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { getMarkets, getPrices, getProducts } from "@/services/api"
 import type { Product } from "@/types/product"
@@ -11,7 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import ProductMarketPicker from "@/components/compare/ProductMarketPicker"
+import { parseIdList } from "@/lib/urlParams"
+import ProductMarketPicker, {
+  MAX_MARKETS,
+  MAX_PRODUCTS,
+} from "@/components/compare/ProductMarketPicker"
 import CompareChart, { type CompareDatum } from "@/components/compare/CompareChart"
 import CompareTable from "@/components/compare/CompareTable"
 
@@ -56,14 +60,37 @@ export default function PriceCompare() {
 
   const [searchParams] = useSearchParams()
 
-  // 首页搜索市场时,按 URL 参数初始化选中市场
+  // URL 参数初始化(只读一次):markets/products 多值优先,fallback 旧的单值 market。
+  // 指纹 = 参数串,同一串只应用一次;数据未就绪时不应用也不打指纹(StrictMode 双跑安全)
+  const appliedUrlRef = useRef<string | null>(null)
   useEffect(() => {
-    if (markets.length === 0) return
-    const marketId = searchParams.get("market")
-    if (marketId && markets.some((m) => m.id === marketId)) {
-      setSelectedMarketIds([marketId])
+    if (products.length === 0 || markets.length === 0) return
+    const fp = searchParams.toString()
+    if (appliedUrlRef.current === fp) return
+    appliedUrlRef.current = fp
+
+    const prodIds = parseIdList(
+      searchParams.get("products"),
+      (id) => products.some((p) => p.id === id),
+      MAX_PRODUCTS,
+    )
+    if (prodIds.length > 0) setSelectedProductIds(prodIds)
+
+    const marketIds = parseIdList(
+      searchParams.get("markets"),
+      (id) => markets.some((m) => m.id === id),
+      MAX_MARKETS,
+    )
+    if (marketIds.length > 0) {
+      setSelectedMarketIds(marketIds)
+    } else {
+      // 兼容旧的单值参数(首页搜索市场入口)
+      const marketId = searchParams.get("market")
+      if (marketId && markets.some((m) => m.id === marketId)) {
+        setSelectedMarketIds([marketId])
+      }
     }
-  }, [markets, searchParams])
+  }, [products, markets, searchParams])
 
   // 数据日期范围,限制日期选择器
   const [minDate, maxDate] = useMemo(() => {

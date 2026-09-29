@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { Link, useSearchParams } from "react-router-dom"
+import { ArrowUpRight } from "lucide-react"
 import { getMarkets, getPrices, getProducts } from "@/services/api"
 import type { Product } from "@/types/product"
 import type { Market } from "@/types/market"
@@ -12,13 +13,17 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { shiftDate } from "@/lib/date"
+import { parseIdList } from "@/lib/urlParams"
 import {
   ALL_MARKETS_ID,
   ALL_MARKETS_LABEL,
   TREND_MAX_MARKETS,
   seriesName,
 } from "@/lib/marketScope"
-import TrendFilter, { type RangeDays } from "@/components/trend/TrendFilter"
+import TrendFilter, {
+  MAX_PRODUCTS,
+  type RangeDays,
+} from "@/components/trend/TrendFilter"
 import StatCards, { type StatCardData } from "@/components/trend/StatCards"
 import TrendChart, { type TrendSeries } from "@/components/trend/TrendChart"
 
@@ -62,22 +67,48 @@ export default function TrendAnalysis() {
 
   const [searchParams] = useSearchParams()
 
-  // 首页搜索/分类入口跳转时,按 URL 参数初始化选择
+  // URL 参数初始化(只读一次):markets/products 多值优先,fallback 旧的单值 product/category。
+  // 指纹 = 参数串,同一串只应用一次;数据未就绪时不应用也不打指纹(StrictMode 双跑安全)
+  const appliedUrlRef = useRef<string | null>(null)
   useEffect(() => {
-    if (products.length === 0) return
+    if (products.length === 0 || markets.length === 0) return
+    const fp = searchParams.toString()
+    if (appliedUrlRef.current === fp) return
+    appliedUrlRef.current = fp
+
+    const marketIds = parseIdList(
+      searchParams.get("markets"),
+      (id) => id === ALL_MARKETS_ID || markets.some((m) => m.id === id),
+      TREND_MAX_MARKETS,
+    )
+    if (marketIds.length > 0) {
+      // 「全国均价」与真实城市互斥
+      setSelectedMarketIds(
+        marketIds.includes(ALL_MARKETS_ID) ? [ALL_MARKETS_ID] : marketIds,
+      )
+    }
+
+    const prodIds = parseIdList(
+      searchParams.get("products"),
+      (id) => products.some((p) => p.id === id),
+      MAX_PRODUCTS,
+    )
+    if (prodIds.length > 0) {
+      setSelectedProductIds(prodIds)
+      return
+    }
     const productId = searchParams.get("product")
     const category = searchParams.get("category")
     if (productId && products.some((p) => p.id === productId)) {
       setSelectedProductIds([productId])
     } else if (category) {
-      // 上限 3 与 TrendFilter 的 MAX_PRODUCTS 一致
       const ids = products
         .filter((p) => p.category === category)
-        .slice(0, 3)
+        .slice(0, MAX_PRODUCTS)
         .map((p) => p.id)
       if (ids.length > 0) setSelectedProductIds(ids)
     }
-  }, [products, searchParams])
+  }, [products, markets, searchParams])
 
   const maxDate = useMemo(() => {
     if (!allPrices) return ""
@@ -244,6 +275,11 @@ export default function TrendAnalysis() {
     )
   }
 
+  // 跳到对比页:全国口径不传 markets(不是真实市场 id,对比页走默认)
+  const compareHref =
+    isAllMarkets || selectedMarketIds.length === 0
+      ? `/compare?products=${selectedProductIds.join(",")}`
+      : `/compare?products=${selectedProductIds.join(",")}&markets=${selectedMarketIds.join(",")}`
   const scopeText = isAllMarkets
     ? ALL_MARKETS_LABEL
     : selectedMarkets.map((m) => m.city).join("、")
@@ -287,7 +323,17 @@ export default function TrendAnalysis() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>价格走势</CardTitle>
+                  <CardTitle className="flex items-center justify-between">
+                    价格走势
+                    <Link
+                      to={compareHref}
+                      title="在价格对比页按所选市场横向比价"
+                      className="inline-flex items-center gap-0.5 text-sm font-normal text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      价格对比
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </CardTitle>
                   <CardDescription>
                     {scopeText} · {dates[0]} ~ {dates[dates.length - 1]} ·
                     单位:元/公斤

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
-import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react"
+import { Link } from "react-router-dom"
+import { ArrowDown, ArrowUp, ChevronsUpDown, TrendingUp } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
+import { TREND_MAX_MARKETS } from "@/lib/marketScope"
 import type { Product } from "@/types/product"
 import type { CompareDatum } from "./CompareChart"
 
@@ -53,6 +55,12 @@ export default function CompareTable({ data, products }: CompareTableProps) {
       setSortDir("asc") // 首次点击升序:直接看见最便宜的市场
     }
   }
+
+  // 趋势页可视化的市场:按当前选择顺序截断到趋势页上限,URL 里写的就是落地后看到的
+  const trendMarketIds = data
+    .slice(0, TREND_MAX_MARKETS)
+    .map((d) => d.market.id)
+    .join(",")
 
   const ariaSort = (id: string): "ascending" | "descending" | "none" =>
     activeKey === id ? (sortDir === "asc" ? "ascending" : "descending") : "none"
@@ -114,6 +122,14 @@ export default function CompareTable({ data, products }: CompareTableProps) {
                     <ChevronsUpDown className="h-3 w-3 opacity-40" />
                   )}
                 </button>
+                <Link
+                  to={`/trend?products=${p.id}&markets=${trendMarketIds}`}
+                  aria-label={`在趋势页查看${p.name}的价格走势`}
+                  title={`在趋势页查看${p.name}的价格走势`}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <TrendingUp className="h-3.5 w-3.5" />
+                </Link>
               </div>
             </TableHead>
           ))}
