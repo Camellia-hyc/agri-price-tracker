@@ -2,7 +2,9 @@ name: daily-crawl
 
 on:
   schedule:
-    - cron: "7 23 * * *"
+    # 北京时间 20:37(UTC 12:37)。原为 UTC 23:07=北京早 7:07,
+    # 那时全国农批市场当天报价才上报了个零头,10 城只能匹配到 2 个。
+    - cron: "37 12 * * *"
   workflow_dispatch:
 
 permissions:
