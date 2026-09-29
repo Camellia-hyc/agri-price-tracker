@@ -14,9 +14,19 @@ export interface StatCardData {
   changePct: number
 }
 
-export default function StatCards({ data }: { data: StatCardData[] }) {
+export default function StatCards({
+  data,
+  caption,
+}: {
+  data: StatCardData[]
+  /** 口径说明(如"按全国 9 个市场的每日期均价统计"),显示在卡片网格上方 */
+  caption?: string
+}) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {caption && (
+        <p className="col-span-full text-xs text-muted-foreground">{caption}</p>
+      )}
       {data.map((d) => {
         const up = d.changePct > 0
         const down = d.changePct < 0

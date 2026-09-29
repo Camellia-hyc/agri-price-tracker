@@ -62,6 +62,7 @@ export default function ProductPicker({
               variant={selected ? "default" : "outline"}
               disabled={disabled}
               onClick={() => onToggle(p.id)}
+              title={disabled ? `最多选择 ${max} 个产品,先取消一个再选` : p.name}
               className="h-7 px-2.5 text-xs"
             >
               {p.name}

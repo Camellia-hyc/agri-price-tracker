@@ -3,10 +3,10 @@ import { useMemo } from "react"
 import type { EChartsOption, LineSeriesOption } from "echarts"
 import EChart from "@/components/charts/EChart"
 import { CHART_COLORS } from "@/lib/chartColors"
-import type { Product } from "@/types/product"
 
 export interface TrendSeries {
-  product: Product
+  /** 系列名(如"猪肉" / "北京" / "猪肉 · 北京"),由页面侧经 seriesName() 生成 */
+  name: string
   values: (number | null)[]
 }
 
@@ -21,9 +21,10 @@ export default function TrendChart({ dates, series }: TrendChartProps) {
       color: CHART_COLORS,
       tooltip: {
         trigger: "axis",
-        valueFormatter: (v) => `${v} 元/公斤`,
+        valueFormatter: (v) =>
+          v === null || v === undefined ? "—" : `${Number(v).toFixed(2)} 元/公斤`,
       },
-      legend: { data: series.map((s) => s.product.name) },
+      legend: { data: series.map((s) => s.name) },
       grid: { left: 8, right: 16, bottom: 8, top: 44, containLabel: true },
       xAxis: { type: "category", data: dates, boundaryGap: false },
       yAxis: {
@@ -33,7 +34,7 @@ export default function TrendChart({ dates, series }: TrendChartProps) {
         scale: true,
       },
       series: series.map((s): LineSeriesOption => ({
-        name: s.product.name,
+        name: s.name,
         type: "line",
         smooth: true,
         showSymbol: false,
