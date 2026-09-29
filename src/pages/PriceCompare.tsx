@@ -186,7 +186,7 @@ export default function PriceCompare() {
                 <CardHeader>
                   <CardTitle>价格明细</CardTitle>
                   <CardDescription>
-                    绿色为当日最低价,红色为当日最高价
+                    绿色为当日最低价,红色为当日最高价 · 点击品种表头排序
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

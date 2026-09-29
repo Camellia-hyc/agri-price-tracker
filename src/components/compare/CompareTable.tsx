@@ -1,4 +1,5 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
+import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -17,7 +18,50 @@ interface CompareTableProps {
   products: Product[]
 }
 
+type SortDir = "asc" | "desc"
+
 export default function CompareTable({ data, products }: CompareTableProps) {
+  const [sortKey, setSortKey] = useState<string | null>(null)
+  const [sortDir, setSortDir] = useState<SortDir>("asc")
+
+  // 取消勾选品种后,排序键自动失效(派生即可,不用 effect)
+  const activeKey =
+    sortKey && products.some((p) => p.id === sortKey) ? sortKey : null
+
+  // 行序:按所选品种列的价格排序。必须复制后排序——
+  // data 是 PriceCompare 的 memo 数组,原地 sort 会污染父缓存(图表 x 轴顺序会被改掉)
+  const rows = useMemo(() => {
+    if (!activeKey) return data
+    const dir = sortDir === "asc" ? 1 : -1
+    const priceOf = (d: CompareDatum) =>
+      d.prices.find((x) => x.product.id === activeKey)?.price ?? null
+    return [...data].sort((a, b) => {
+      const pa = priceOf(a)
+      const pb = priceOf(b)
+      if (pa === null && pb === null) return 0
+      if (pa === null) return 1 // 无数据恒排最后,与方向无关
+      if (pb === null) return -1
+      return (pa - pb) * dir
+    })
+  }, [data, activeKey, sortDir])
+
+  const toggleSort = (productId: string) => {
+    if (activeKey === productId) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"))
+    } else {
+      setSortKey(productId)
+      setSortDir("asc") // 首次点击升序:直接看见最便宜的市场
+    }
+  }
+
+  const ariaSort = (id: string): "ascending" | "descending" | "none" =>
+    activeKey === id ? (sortDir === "asc" ? "ascending" : "descending") : "none"
+
+  const sortTitle = (p: Product) =>
+    activeKey === p.id
+      ? `按${p.name}价格${sortDir === "asc" ? "降序" : "升序"}排列`
+      : `按${p.name}价格排序(升序,最便宜在前)`
+
   // 每列的最低价/最高价,用于标色
   const colMinMax = useMemo(
     () =>
@@ -50,15 +94,33 @@ export default function CompareTable({ data, products }: CompareTableProps) {
         <TableRow>
           <TableHead>市场</TableHead>
           {products.map((p) => (
-            <TableHead key={p.id} className="text-right">
-              {p.name}
-              <span className="ml-1 text-xs font-normal">(元/公斤)</span>
+            <TableHead key={p.id} className="text-right" aria-sort={ariaSort(p.id)}>
+              <div className="flex items-center justify-end gap-1">
+                <button
+                  type="button"
+                  onClick={() => toggleSort(p.id)}
+                  title={sortTitle(p)}
+                  className="inline-flex items-center gap-1 rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  {p.name}
+                  <span className="text-xs font-normal">(元/公斤)</span>
+                  {activeKey === p.id ? (
+                    sortDir === "asc" ? (
+                      <ArrowUp className="h-3 w-3" />
+                    ) : (
+                      <ArrowDown className="h-3 w-3" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="h-3 w-3 opacity-40" />
+                  )}
+                </button>
+              </div>
             </TableHead>
           ))}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((d) => (
+        {rows.map((d) => (
           <TableRow key={d.market.id}>
             <TableCell className="font-medium">
               {d.market.name}
