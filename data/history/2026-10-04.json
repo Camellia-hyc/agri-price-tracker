@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-04",
+  "markets": [
+    {
+      "id": "gz_90609211",
+      "name": "广东汕头农副产品批发中心市场",
+      "city": "广州",
+      "region": "华南"
+    },
+    {
+      "id": "wh_8795aa3b",
+      "name": "武汉白沙洲农副产品大市场有限公司",
+      "city": "武汉",
+      "region": "华中"
+    }
+  ],
+  "records": [
+    {
+      "productId": "cabbage",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-10-04",
+      "price": 1.6
+    },
+    {
+      "productId": "cabbage",
+      "marketId": "gz_90609211",
+      "date": "2026-10-04",
+      "price": 3
+    },
+    {
+      "productId": "tomato",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-10-04",
+      "price": 4.1
+    },
+    {
+      "productId": "tomato",
+      "marketId": "gz_90609211",
+      "date": "2026-10-04",
+      "price": 4.1
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-10-04",
+      "price": 3.4
+    },
+    {
+      "productId": "cucumber",
+      "marketId": "gz_90609211",
+      "date": "2026-10-04",
+      "price": 3.9
+    },
+    {
+      "productId": "potato",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-10-04",
+      "price": 2.4
+    },
+    {
+      "productId": "potato",
+      "marketId": "gz_90609211",
+      "date": "2026-10-04",
+      "price": 3.8
+    },
+    {
+      "productId": "carp",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-10-04",
+      "price": 9.47
+    },
+    {
+      "productId": "grass_carp",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-10-04",
+      "price": 11.6
+    },
+    {
+      "productId": "crucian",
+      "marketId": "wh_8795aa3b",
+      "date": "2026-10-04",
+      "price": 15.51
+    }
+  ]
+}
