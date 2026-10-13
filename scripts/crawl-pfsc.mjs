@@ -311,7 +311,8 @@ for (let di = 0; di < DAYS; di++) {
       const key = `${p.id}|${m.id}|${date}`
       const real = realMap.get(key)
       if (real !== undefined) {
-        merged.push({ productId: p.id, marketId: m.id, date, price: real })
+        // real: 1 = 官方上报真值(前端据此标"官方真值"圆点);mock 格不带该字段
+        merged.push({ productId: p.id, marketId: m.id, date, price: real, real: 1 })
         realCount++
         continue
       }
