@@ -5,31 +5,37 @@
 
 /* 主题:绿色系,贴合农产品 */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --radius: 0.75rem;
+  /* 页面底色带极浅的绿灰,让白色卡片浮起来 */
+  --background: oklch(0.982 0.006 150);
+  --foreground: oklch(0.24 0.02 155);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.24 0.02 155);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.24 0.02 155);
   --primary: oklch(0.55 0.14 155);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.96 0.015 155);
-  --secondary-foreground: oklch(0.3 0.05 155);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.94 0.025 155);
-  --accent-foreground: oklch(0.3 0.05 155);
+  --primary-foreground: oklch(0.985 0.005 150);
+  --secondary: oklch(0.963 0.01 150);
+  --secondary-foreground: oklch(0.32 0.06 155);
+  --muted: oklch(0.965 0.008 150);
+  --muted-foreground: oklch(0.5 0.022 155);
+  --accent: oklch(0.945 0.03 150);
+  --accent-foreground: oklch(0.32 0.06 155);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: oklch(0.925 0.012 150);
+  --input: oklch(0.9 0.014 150);
   --ring: oklch(0.55 0.14 155);
-  --chart-1: oklch(0.55 0.14 155);
-  --chart-2: oklch(0.65 0.12 120);
-  --chart-3: oklch(0.75 0.14 85);
-  --chart-4: oklch(0.6 0.1 200);
-  --chart-5: oklch(0.68 0.16 25);
+  /* 行情涨跌语义色(国内习惯:红涨绿跌)。
+     绿跌用比品牌绿更深一档,保证小号数字在白色上可读(≥4.5:1) */
+  --rise: oklch(0.577 0.245 27.325);
+  --fall: oklch(0.527 0.154 150.069);
+  /* 图表分类色:经 dataviz 验证器全检通过(亮度带/彩度/色盲分离/对比度) */
+  --chart-1: oklch(0.627 0.17 149.2); /* #16a34a 品牌绿 */
+  --chart-2: oklch(0.546 0.215 262.9); /* #2563eb 蓝 */
+  --chart-3: oklch(0.663 0.181 39.8); /* #eb6834 橙 */
+  --chart-4: oklch(0.62 0.18 25.6); /* #e34948 红 */
+  --chart-5: oklch(0.53 0.2 285.7); /* #6250d6 紫 */
 }
 
 .dark {
@@ -52,14 +58,19 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.7 0.16 155);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --rise: oklch(0.704 0.191 22.216);
+  --fall: oklch(0.696 0.17 162.48);
+  --chart-1: oklch(0.68 0.15 150);
+  --chart-2: oklch(0.62 0.19 259);
+  --chart-3: oklch(0.7 0.17 42);
+  --chart-4: oklch(0.66 0.18 25);
+  --chart-5: oklch(0.65 0.18 285);
 }
 
 @theme inline {
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -79,6 +90,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-rise: var(--rise);
+  --color-fall: var(--fall);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -88,6 +101,13 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* 卡片阴影:贴近、克制、绿调 */
+  --shadow-card:
+    0 1px 2px oklch(0.3 0.04 150 / 5%), 0 10px 28px -14px oklch(0.3 0.04 150 / 12%);
+  --shadow-card-hover:
+    0 2px 4px oklch(0.3 0.04 150 / 6%), 0 14px 34px -14px oklch(0.3 0.04 150 / 18%);
+  --shadow-pop:
+    0 4px 10px oklch(0.3 0.04 150 / 8%), 0 22px 48px -20px oklch(0.3 0.04 150 / 26%);
 }
 
 @layer base {
@@ -95,6 +115,9 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+  ::selection {
+    @apply bg-primary/20;
   }
 }

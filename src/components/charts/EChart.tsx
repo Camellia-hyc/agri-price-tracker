@@ -8,6 +8,8 @@ import {
 } from "echarts/components"
 import { CanvasRenderer } from "echarts/renderers"
 import type { EChartsOption } from "echarts"
+// 注册"agri"主题与色板的副作用导入(必须在 init 前)
+import "@/lib/echartTheme"
 
 // 按需注册,控制打包体积
 echarts.use([
@@ -31,7 +33,7 @@ export default function EChart({ option, height = 360 }: EChartProps) {
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    const chart = echarts.init(el)
+    const chart = echarts.init(el, "agri")
     chartRef.current = chart
     const onResize = () => chart.resize()
     window.addEventListener("resize", onResize)
