@@ -64,11 +64,12 @@ export default function Home() {
   }, [scrollTarget, products, allPrices])
 
   // 异动榜 + 今日行情:最新两日的全市场均价涨跌
-  const { gainers, losers, hotRows, lastDate } = useMemo(() => {
+  const { gainers, losers, hotRows, hotTrends, lastDate } = useMemo(() => {
     const empty = {
       gainers: [] as MoverRow[],
       losers: [] as MoverRow[],
       hotRows: [] as MoverRow[],
+      hotTrends: {} as Record<string, (number | null)[]>,
       lastDate: "",
     }
     if (!allPrices || allPrices.length === 0 || products.length === 0) return empty
@@ -114,6 +115,12 @@ export default function Home() {
     const hotRows = HOT_PRODUCT_IDS.map((id) => byId.get(id)).filter(
       (r): r is MoverRow => r !== undefined,
     )
+    // 热门品种近 14 天的每日期均价,供迷你走势线使用
+    const trendDates = dates.slice(-14)
+    const hotTrends: Record<string, (number | null)[]> = {}
+    for (const id of HOT_PRODUCT_IDS) {
+      hotTrends[id] = trendDates.map((d) => avg(byDate.get(d)?.get(id)))
+    }
     return {
       gainers: rows.filter((r) => r.changePct > 0).slice(0, 5),
       // rows 降序,取负数部分再反转 → 跌幅最大在前
@@ -122,6 +129,7 @@ export default function Home() {
         .reverse()
         .slice(0, 5),
       hotRows,
+      hotTrends,
       lastDate: last,
     }
   }, [allPrices, products])
@@ -136,11 +144,13 @@ export default function Home() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 px-4 py-8">
-      <section className="space-y-4 py-4 text-center">
-        <h1 className="text-3xl font-bold">农价通</h1>
-        <p className="text-sm text-muted-foreground">
-          全国主要批发市场农产品价格对比与趋势分析
-        </p>
+      <section className="space-y-5 pt-10 pb-2 text-center">
+        <div className="space-y-3">
+          <h1 className="text-4xl font-bold tracking-tight">农价通</h1>
+          <p className="text-sm text-muted-foreground sm:text-base">
+            全国主要批发市场农产品价格对比与趋势分析
+          </p>
+        </div>
         <div className="mx-auto max-w-xl">
           <SearchBar
             products={products}
@@ -148,6 +158,22 @@ export default function Home() {
             onJumpTo={setScrollTarget}
           />
         </div>
+        {products.length > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center rounded-full border border-border/70 bg-card px-3 py-1 shadow-sm">
+              覆盖 {markets.length} 个批发市场
+            </span>
+            <span className="inline-flex items-center rounded-full border border-border/70 bg-card px-3 py-1 shadow-sm">
+              {products.length} 个常用品种
+            </span>
+            {lastDate && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-medium text-primary shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                数据更新至 {lastDate}
+              </span>
+            )}
+          </div>
+        )}
       </section>
 
       {products.length === 0 ? (
@@ -160,6 +186,7 @@ export default function Home() {
         <>
           <TodayPrices
             rows={hotRows}
+            trends={hotTrends}
             lastDate={lastDate}
             marketCount={markets.length}
             loading={allPrices === null && !priceError}
@@ -167,12 +194,18 @@ export default function Home() {
           />
 
           <section id="categories" className="scroll-mt-20 space-y-3">
-            <h2 className="text-lg font-semibold">按分类浏览</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+              <span className="h-5 w-1 rounded-full bg-primary" />
+              按分类浏览
+            </h2>
             <CategoryGrid products={products} />
           </section>
 
           <section id="movers" className="scroll-mt-20 space-y-3">
-            <h2 className="text-lg font-semibold">价格异动</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+              <span className="h-5 w-1 rounded-full bg-primary" />
+              价格异动
+            </h2>
             {priceError ? (
               <Card>
                 <CardContent className="py-8 text-center text-sm text-destructive">
