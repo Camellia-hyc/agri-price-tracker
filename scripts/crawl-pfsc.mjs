@@ -31,40 +31,22 @@ function decryptAes(e) {
   return out
 }
 
-// ---------- 10 城市官方市场挑选配置 ----------
-// 项目保持 10 城市设计,从官方当天实际有报价的市场里挑:品牌同名优先 → 按上报品种数最多
-const REGION_MAP = [
-  { city: "深圳", keys: ["深圳"] },
-  { city: "广州", keys: ["广州", "广东"] },
-  { city: "杭州", keys: ["杭州", "浙江"] },
-  { city: "郑州", keys: ["郑州", "河南"] },
-  { city: "武汉", keys: ["武汉", "湖北"] },
-  { city: "成都", keys: ["成都", "四川"] },
-  { city: "西安", keys: ["西安", "陕西"] },
-  { city: "沈阳", keys: ["沈阳", "辽宁"] },
-  { city: "北京", keys: ["北京"] },
-  { city: "上海", keys: ["上海"] },
-]
+// ---------- 城市官方市场配置(2026-10-13 起:城市→市场固化) ----------
+// 匹配三层,优先级:品牌同名 → 城市名包含 → 省名包含。
+// 固化只认前两层;省名层(如"湖北襄樊"之于武汉)是外市替补,不得固化,避免城市标签错挂。
 const CITY_DEFS = [
-  { city: "北京", region: "华北", brand: ["新发地"] },
-  { city: "上海", region: "华东", brand: ["江桥", "江杨", "上海农产品中心"] },
-  { city: "广州", region: "华南", brand: ["江南"] },
-  { city: "深圳", region: "华南", brand: ["海吉星"] },
-  { city: "杭州", region: "华东", brand: ["农副"] },
-  { city: "郑州", region: "华中", brand: ["万邦"] },
-  { city: "武汉", region: "华中", brand: ["白沙洲"] },
-  { city: "成都", region: "西南", brand: ["农产品中心"] },
-  { city: "西安", region: "西北", brand: ["欣桥", "西安"] },
-  { city: "沈阳", region: "东北", brand: ["十二线", "盛发"] },
+  { city: "北京", region: "华北", brand: ["新发地"], cityKeys: ["北京"], provinceKeys: [] },
+  { city: "上海", region: "华东", brand: ["江桥", "江杨", "上海农产品中心"], cityKeys: ["上海"], provinceKeys: [] },
+  { city: "广州", region: "华南", brand: ["江南"], cityKeys: ["广州"], provinceKeys: ["广东"] },
+  { city: "深圳", region: "华南", brand: ["海吉星"], cityKeys: ["深圳"], provinceKeys: [] },
+  { city: "杭州", region: "华东", brand: ["南庄兜"], cityKeys: ["杭州"], provinceKeys: ["浙江"] },
+  { city: "郑州", region: "华中", brand: ["万邦"], cityKeys: ["郑州"], provinceKeys: ["河南"] },
+  { city: "武汉", region: "华中", brand: ["白沙洲"], cityKeys: ["武汉"], provinceKeys: ["湖北"] },
+  { city: "成都", region: "西南", brand: [], cityKeys: ["成都"], provinceKeys: ["四川"] },
+  { city: "西安", region: "西北", brand: ["朱雀", "欣桥"], cityKeys: ["西安"], provinceKeys: ["陕西"] },
+  { city: "沈阳", region: "东北", brand: ["盛发", "十二线"], cityKeys: ["沈阳"], provinceKeys: ["辽宁"] },
 ]
 const PINYIN = { 北京: "bj", 上海: "sh", 广州: "gz", 深圳: "sz", 杭州: "hz", 郑州: "zz", 武汉: "wh", 成都: "cd", 西安: "xa", 沈阳: "sy" }
-
-function cityOf(marketName) {
-  for (const { city, keys } of REGION_MAP) {
-    if (keys.some((k) => marketName.startsWith(k))) return city
-  }
-  return null
-}
 
 function marketIdOf(city, name) {
   const hash = crypto.createHash("md5").update(name, "utf8").digest("hex").slice(0, 8)
@@ -181,25 +163,73 @@ if (!dayData.size) {
   process.exit(1)
 }
 
-// ---------- 4. 挑选 10 城市官方市场 ----------
+// ---------- 4. 挑选城市官方市场(城市→市场固化) ----------
 // 统计每个市场当天上报的品种数
 const marketStats = new Map() // 市场名 -> 上报品种数
 for (const d of dayData.values()) {
   for (const name of d.x) marketStats.set(name, (marketStats.get(name) || 0) + 1)
 }
-console.log(`\n当天共 ${marketStats.size} 个官方市场有报价,挑选 10 城市代表市场:`)
+console.log(`\n当天共 ${marketStats.size} 个官方市场有报价,挑选城市代表市场:`)
+
+// 历史统计(直接读已提交的 data/history,不引入额外状态文件——确定性计算,CI 每次运行结果一致):
+// 每个市场 id 的累计记录数 + 最近一次的名称,用于确定各城的"固化市场"
+const histCount = new Map() // marketId -> 累计记录数
+const histName = new Map() // marketId -> 市场名(快照里最后一次出现)
+for (const f of readdirSync(HISTORY).filter((x) => x.endsWith(".json"))) {
+  const snap = JSON.parse(readFileSync(path.join(HISTORY, f), "utf8"))
+  for (const m of snap.markets || []) histName.set(m.id, m.name)
+  for (const r of snap.records || []) histCount.set(r.marketId, (histCount.get(r.marketId) || 0) + 1)
+}
+
+// 匹配层级:1 品牌同名 / 2 城市名包含 / 3 省名包含 / 0 不匹配
+function tierOf(name, c) {
+  if (c.brand.some((b) => name.includes(b))) return 1
+  if (c.cityKeys.some((k) => name.includes(k))) return 2
+  if (c.provinceKeys.some((k) => name.includes(k))) return 3
+  return 0
+}
 
 const markets = []
 for (const c of CITY_DEFS) {
-  const cands = [...marketStats.entries()].filter(([name]) => cityOf(name) === c.city)
+  // 固化市场 = 该城历史记录最多、层级最高的市场(层优先:品牌 > 城市名 > 省名)。
+  // 省名层替补(襄樊/朝阳/汕头这类外市市场)即使记录更多也在最低层,不会被固化。
+  const histCands = [...histCount.entries()]
+    .filter(([id]) => id.startsWith(PINYIN[c.city] + "_") && histName.has(id))
+    .map(([id, hist]) => ({ name: histName.get(id), hist, tier: tierOf(histName.get(id), c) }))
+    .filter((x) => x.tier > 0)
+    .sort((a, b) => a.tier - b.tier || b.hist - a.hist)
+  const pinned = histCands[0] ?? null
+
+  const cands = [...marketStats.entries()]
+    .map(([name, count]) => ({ name, count, tier: tierOf(name, c) }))
+    .filter((x) => x.tier > 0)
+
+  if (pinned) {
+    // 已有固化市场:城市永远挂在它的 id 上,历史价格序列不会因换 id 断掉。
+    // 今日它没报价 → 不换替补(那正是此前 25% 真值掉队的根源),城市保留、当日无真值即可。
+    const today = cands.find((x) => x.name === pinned.name)
+    markets.push({ id: marketIdOf(c.city, pinned.name), name: pinned.name, city: c.city, region: c.region, factor: undefined })
+    console.log(
+      today
+        ? `  ${c.city}:${pinned.name}(上报 ${today.count} 个品种,固化)`
+        : `  ${c.city}:${pinned.name}(今日无报价,仅保留历史)`,
+    )
+    continue
+  }
+
+  // 新城市(无历史):品牌层 > 城市名层,同层取当日上报品种最多;
+  // 只有省名层可匹配时说明并无本市市场,跳过不采用
   if (!cands.length) {
     console.warn(`  [跳过] ${c.city}:当天无该城市市场报价`)
     continue
   }
-  const branded = cands.filter(([name]) => c.brand.some((b) => name.includes(b)))
-  const [name, count] = (branded.length ? branded : cands).sort((a, b) => b[1] - a[1])[0]
-  markets.push({ id: marketIdOf(c.city, name), name, city: c.city, region: c.region, factor: undefined })
-  console.log(`  ${c.city}:${name}(上报 ${count} 个品种${branded.length ? ",品牌同名" : ""})`)
+  const pick = [...cands].sort((a, b) => a.tier - b.tier || b.count - a.count)[0]
+  if (pick.tier === 3) {
+    console.warn(`  [跳过] ${c.city}:仅能匹配到省名层替补「${pick.name}」,不采用`)
+    continue
+  }
+  markets.push({ id: marketIdOf(c.city, pick.name), name: pick.name, city: c.city, region: c.region, factor: undefined })
+  console.log(`  ${c.city}:${pick.name}(上报 ${pick.count} 个品种,首次选择${pick.tier === 1 ? ",品牌同名" : ""})`)
 }
 if (!markets.length) {
   console.error("错误:没有任何城市能匹配到官方市场,不生成输出。")
