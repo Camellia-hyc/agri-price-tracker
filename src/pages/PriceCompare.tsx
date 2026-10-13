@@ -170,7 +170,7 @@ export default function PriceCompare() {
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
       <div>
-        <h1 className="text-2xl font-bold">价格对比</h1>
+        <h1 className="text-2xl font-bold tracking-tight">价格对比</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           对比不同市场同一日期的农产品价格
         </p>
@@ -202,7 +202,9 @@ export default function PriceCompare() {
               <Card>
                 <CardHeader>
                   <CardTitle>各市场价格柱状对比</CardTitle>
-                  <CardDescription>{date}</CardDescription>
+                  <CardDescription>
+                    {date} · 所选 {selectedMarkets.length} 个市场
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <CompareChart data={compareData} products={selectedProducts} />
@@ -213,7 +215,7 @@ export default function PriceCompare() {
                 <CardHeader>
                   <CardTitle>价格明细</CardTitle>
                   <CardDescription>
-                    绿色为当日最低价,红色为当日最高价 · 点击品种表头排序
+                    单位:元/公斤 · 绿色为当日最低价,红色为当日最高价 · 点击品种表头排序
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

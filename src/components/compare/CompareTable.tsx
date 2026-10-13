@@ -111,7 +111,6 @@ export default function CompareTable({ data, products }: CompareTableProps) {
                   className="inline-flex items-center gap-1 rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
                   {p.name}
-                  <span className="text-xs font-normal">(元/公斤)</span>
                   {activeKey === p.id ? (
                     sortDir === "asc" ? (
                       <ArrowUp className="h-3 w-3" />
@@ -138,36 +137,56 @@ export default function CompareTable({ data, products }: CompareTableProps) {
       <TableBody>
         {rows.map((d) => (
           <TableRow key={d.market.id}>
-            <TableCell className="font-medium">
-              {d.market.name}
-              <span className="ml-1.5 text-xs text-muted-foreground">
-                {d.market.region}
-              </span>
+            {/* 城市为主(与筛选 chip 一致),市场全名次行:窄屏不再挤占价格列 */}
+            <TableCell className="min-w-24 max-w-32 sm:max-w-none">
+              <div className="whitespace-nowrap font-medium">{d.market.city}</div>
+              <div
+                className="truncate text-xs font-normal text-muted-foreground"
+                title={`${d.market.name} · ${d.market.region}`}
+              >
+                {d.market.name} · {d.market.region}
+              </div>
             </TableCell>
             {d.prices.map((x, i) => {
               const { min, max } = colMinMax[i]
               const highlight = min !== max && x.price !== null
+              const isMin = highlight && x.price === min
+              const isMax = highlight && x.price === max
               return (
-                <TableCell
-                  key={x.product.id}
-                  className={cn(
-                    "text-right tabular-nums",
-                    highlight && x.price === min && "font-semibold text-primary",
-                    highlight && x.price === max && "font-semibold text-destructive",
+                <TableCell key={x.product.id} className="text-right">
+                  {x.price === null ? (
+                    <span className="text-muted-foreground">—</span>
+                  ) : (
+                    <span
+                      className={cn(
+                        "inline-block min-w-[3.75rem] rounded-md px-2 py-0.5 tabular-nums",
+                        isMin && "bg-fall/10 font-semibold text-fall",
+                        isMax && "bg-rise/10 font-semibold text-rise",
+                        !isMin && !isMax && "px-2",
+                      )}
+                    >
+                      {x.price.toFixed(2)}
+                    </span>
                   )}
-                >
-                  {x.price === null ? "—" : x.price.toFixed(2)}
                 </TableCell>
               )
             })}
           </TableRow>
         ))}
       </TableBody>
-      <TableFooter>
+      <TableFooter className="bg-muted/60">
         <TableRow>
-          <TableCell>均价</TableCell>
+          <TableCell className="whitespace-nowrap font-semibold">
+            均价
+            <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+              (所选市场)
+            </span>
+          </TableCell>
           {colAvg.map((avg, i) => (
-            <TableCell key={products[i].id} className="text-right tabular-nums">
+            <TableCell
+              key={products[i].id}
+              className="text-right font-semibold tabular-nums"
+            >
               {avg.toFixed(2)}
             </TableCell>
           ))}
