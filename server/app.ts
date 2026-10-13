@@ -8,29 +8,37 @@ import type { Context } from "hono"
 import type { Product } from "../src/types/product.ts"
 import type { Market } from "../src/types/market.ts"
 import type { PriceQuery, PriceRecord } from "../src/types/price.ts"
+import type { PublicUser, Role } from "../src/types/user.ts"
+import { createAdminRoutes } from "./admin.ts"
+import { createAuthRoutes } from "./auth.ts"
+import { isValidDate } from "./validation.ts"
 
 export interface HealthStats {
   counts: { products: number; markets: number; prices: number; real: number }
   dateRange: { min: string | null; max: string | null }
 }
 
-// 数据访问接缝:任何实现只要满足这四个方法即可(全部异步,对齐 D1 的 Promise API)
+// 数据访问接缝:任何实现只要满足这些方法即可(全部异步,对齐 D1 的 Promise API)
 export interface Repo {
   listProducts(): Promise<Product[]>
   listMarkets(): Promise<Market[]>
   listPrices(query: PriceQuery): Promise<PriceRecord[]>
   stats(): Promise<HealthStats>
+
+  // 用户(本地后端模式的注册/登录/管理员后台)
+  findUserByUsername(username: string): Promise<(PublicUser & { passwordHash: string }) | null>
+  findUserById(id: number): Promise<PublicUser | null>
+  createUser(username: string, passwordHash: string, role: Role): Promise<PublicUser>
+  listUsers(): Promise<PublicUser[]>
+  updateUserRole(id: number, role: Role): Promise<boolean>
+  deleteUser(id: number): Promise<boolean>
+
+  // 价格数据管理(管理员改价/新增/删除;人工录入视为真值 real=1)
+  upsertPrice(row: { productId: string; marketId: string; date: string; price: number }): Promise<void>
+  deletePrice(row: { productId: string; marketId: string; date: string }): Promise<boolean>
 }
 
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 const MAX_IDS = 200
-
-function isValidDate(s: string): boolean {
-  if (!DATE_RE.test(s)) return false
-  // 仅正则不够:Date.parse("2026-02-31") 会回滚为 3 月 3 日而不是 NaN,必须往返校验
-  const d = new Date(`${s}T00:00:00Z`)
-  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s
-}
 
 // 兼容 ?productIds=a,b 与 ?productIds=a&productIds=b;空串/空白项剔除(视为未提供)
 function readList(c: Context, key: string): string[] {
@@ -79,6 +87,10 @@ export function createApp(repo: Repo): Hono {
     if ("error" in parsed) return c.json({ error: parsed.error }, 400)
     return c.json(await repo.listPrices(parsed.query))
   })
+
+  // 本地后端模式:用户系统与管理员接口(线上静态版不挂载,前端也不会调用)
+  app.route("/api/auth", createAuthRoutes(repo))
+  app.route("/api/admin", createAdminRoutes(repo))
 
   app.notFound((c) => c.json({ error: "not found" }, 404))
   app.onError((err, c) => {

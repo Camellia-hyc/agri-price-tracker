@@ -32,3 +32,13 @@ CREATE TABLE IF NOT EXISTS prices (
 
 -- 全量/日期区间查询的排序依据(3.5 万行,索引开销可忽略)
 CREATE INDEX IF NOT EXISTS idx_prices_order ON prices(date, productOrd, marketOrd);
+
+-- 用户表(本地后端模式的注册/登录与管理员后台;线上静态版不涉及)。
+-- 注意:seed 的"清空三表全量重建"与 --reset 都不动本表 —— 数据可重建,账号有意保留。
+CREATE TABLE IF NOT EXISTS users (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  username     TEXT    NOT NULL UNIQUE,
+  passwordHash TEXT    NOT NULL,  -- 格式 scrypt$N$r$p$saltHex$hashHex(见 password.ts)
+  role         TEXT    NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+  createdAt    TEXT    NOT NULL   -- ISO 8601
+);

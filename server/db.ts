@@ -4,6 +4,7 @@ import { DatabaseSync } from "node:sqlite"
 import type { Product } from "../src/types/product.ts"
 import type { Market } from "../src/types/market.ts"
 import type { PriceQuery, PriceRecord } from "../src/types/price.ts"
+import type { PublicUser, Role } from "../src/types/user.ts"
 import type { HealthStats, Repo } from "./app.ts"
 
 interface PriceRow {
@@ -12,6 +13,15 @@ interface PriceRow {
   date: string
   price: number
   real: number | null
+}
+
+// 用户行(含哈希;仅服务端内部使用,绝不进入 API 响应)
+interface UserRow {
+  id: number
+  username: string
+  passwordHash: string
+  role: Role
+  createdAt: string
 }
 
 export function createRepo(dbPath: string): Repo {
@@ -26,6 +36,24 @@ export function createRepo(dbPath: string): Repo {
     'SELECT COUNT(*) AS n, SUM(CASE WHEN "real" = 1 THEN 1 ELSE 0 END) AS realCount FROM prices',
   )
   const selDateRange = db.prepare("SELECT MIN(date) AS min, MAX(date) AS max FROM prices")
+
+  // ---- 用户(注册/登录/管理员后台)----
+  const selUserByUsername = db.prepare(
+    "SELECT id, username, passwordHash, role, createdAt FROM users WHERE username = ?",
+  )
+  const selUserById = db.prepare("SELECT id, username, role, createdAt FROM users WHERE id = ?")
+  const selUsers = db.prepare("SELECT id, username, role, createdAt FROM users ORDER BY id")
+  const insUser = db.prepare("INSERT INTO users (username, passwordHash, role, createdAt) VALUES (?, ?, ?, ?)")
+  const updUserRole = db.prepare("UPDATE users SET role = ? WHERE id = ?")
+  const delUser = db.prepare("DELETE FROM users WHERE id = ?")
+
+  // ---- 价格数据管理(管理员改价/删除;ord 取标量子查询,调用方已校验 id 存在)----
+  const upsPrice = db.prepare(
+    'INSERT INTO prices (productId, marketId, date, price, "real", productOrd, marketOrd)' +
+      " VALUES (?, ?, ?, ?, 1, (SELECT ord FROM products WHERE id = ?), (SELECT ord FROM markets WHERE id = ?))" +
+      ' ON CONFLICT(productId, marketId, date) DO UPDATE SET price = excluded.price, "real" = 1',
+  )
+  const delPrice = db.prepare("DELETE FROM prices WHERE productId = ? AND marketId = ? AND date = ?")
 
   // 模拟行必须"没有 real 这个 key"(前端用 r.real === 1 判断,不能输出 null)
   // 显式构造还固定了 key 顺序 = productId, marketId, date, price, [real],
@@ -92,6 +120,45 @@ export function createRepo(dbPath: string): Repo {
         },
         dateRange: { min: range.min, max: range.max },
       }
+    },
+
+    // ---- 用户 ----
+
+    async findUserByUsername(username: string) {
+      const row = selUserByUsername.get(username) as UserRow | undefined
+      return row ?? null
+    },
+
+    async findUserById(id: number) {
+      return (selUserById.get(id) as PublicUser | undefined) ?? null
+    },
+
+    async createUser(username: string, passwordHash: string, role: Role) {
+      const createdAt = new Date().toISOString()
+      const r = insUser.run(username, passwordHash, role, createdAt)
+      return { id: Number(r.lastInsertRowid), username, role, createdAt }
+    },
+
+    async listUsers() {
+      return selUsers.all() as unknown as PublicUser[]
+    },
+
+    async updateUserRole(id: number, role: Role) {
+      return updUserRole.run(role, id).changes > 0
+    },
+
+    async deleteUser(id: number) {
+      return delUser.run(id).changes > 0
+    },
+
+    // ---- 价格数据管理 ----
+
+    async upsertPrice(row) {
+      upsPrice.run(row.productId, row.marketId, row.date, row.price, row.productId, row.marketId)
+    },
+
+    async deletePrice(row) {
+      return delPrice.run(row.productId, row.marketId, row.date).changes > 0
     },
   }
 }

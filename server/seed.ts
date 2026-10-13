@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { join } from "node:path"
 import { DatabaseSync } from "node:sqlite"
+import { hashPassword } from "./password.ts"
 
 const MOCK_DIR = fileURLToPath(new URL("../public/mock/", import.meta.url))
 const SCHEMA_FILE = fileURLToPath(new URL("./schema.sql", import.meta.url))
@@ -92,6 +93,37 @@ export function seedDatabase(dbPath: string, opts: { reset?: boolean; quiet?: bo
       `[seed] products ${products.length} / markets ${markets.length} / prices ${stats.n}(real ${stats.realCount ?? 0})`,
     )
     console.log(`[seed] 日期范围 ${stats.minDate} ~ ${stats.maxDate}`)
+  }
+  db.close()
+
+  // 演示环境保底:确保存在管理员账号(仅当用户名 admin 不存在时创建)
+  ensureDefaultAdmin(dbPath)
+}
+
+// 幂等建表(schema.sql 全部 IF NOT EXISTS):供 index.ts 启动时给旧库补上新增的表(如 users)
+export function ensureSchema(dbPath: string): void {
+  const db = new DatabaseSync(dbPath)
+  db.exec("PRAGMA busy_timeout = 5000")
+  db.exec(readFileSync(SCHEMA_FILE, "utf8"))
+  db.close()
+}
+
+// 确保管理员账号 admin 存在(密码默认 admin123,ADMIN_PASSWORD 环境变量可覆盖)。
+// 仅当用户名 admin 不存在时创建;已存在则不干预(被改名/降级是使用者的选择)。
+export function ensureDefaultAdmin(dbPath: string): void {
+  const db = new DatabaseSync(dbPath)
+  db.exec("PRAGMA busy_timeout = 5000")
+  const existing = db.prepare("SELECT id FROM users WHERE username = 'admin'").get()
+  if (existing) {
+    console.log("[seed] 管理员账号 admin 已存在")
+  } else {
+    const password = process.env.ADMIN_PASSWORD ?? "admin123"
+    db.prepare("INSERT INTO users (username, passwordHash, role, createdAt) VALUES (?, ?, 'admin', ?)").run(
+      "admin",
+      hashPassword(password),
+      new Date().toISOString(),
+    )
+    console.log(`[seed] 已创建默认管理员:admin / ${password}(演示用,ADMIN_PASSWORD 可覆盖)`)
   }
   db.close()
 }
