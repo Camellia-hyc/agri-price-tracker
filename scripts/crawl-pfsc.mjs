@@ -1,6 +1,6 @@
 // 农价通真实数据爬虫(Crawlee)
 // 数据源:农业农村部全国农产品批发市场价格信息系统 pfsc.agri.cn
-// 流程:品种树匹配 → 爬 20 品种当日价格(AES 解密)→ 挑选 10 城市官方市场
+// 流程:品种树匹配 → 爬 products.json 全部品种当日价格(AES 解密)→ 挑选 CITY_DEFS 城市官方市场(固化)
 //       → 当日快照存入 data/history/ → 合并最近 90 天(真实快照覆盖,mock 补齐缺口)
 //       → 生成 public/mock/markets.json + prices.json(前端 api.ts 零改动)
 // 用法:node scripts/crawl-pfsc.mjs(建议每日运行一次,自动积累历史)
@@ -38,15 +38,18 @@ const CITY_DEFS = [
   { city: "北京", region: "华北", brand: ["新发地"], cityKeys: ["北京"], provinceKeys: [] },
   { city: "上海", region: "华东", brand: ["江桥", "江杨", "上海农产品中心"], cityKeys: ["上海"], provinceKeys: [] },
   { city: "广州", region: "华南", brand: ["江南"], cityKeys: ["广州"], provinceKeys: ["广东"] },
-  { city: "深圳", region: "华南", brand: ["海吉星"], cityKeys: ["深圳"], provinceKeys: [] },
   { city: "杭州", region: "华东", brand: ["南庄兜"], cityKeys: ["杭州"], provinceKeys: ["浙江"] },
   { city: "郑州", region: "华中", brand: ["万邦"], cityKeys: ["郑州"], provinceKeys: ["河南"] },
   { city: "武汉", region: "华中", brand: ["白沙洲"], cityKeys: ["武汉"], provinceKeys: ["湖北"] },
   { city: "成都", region: "西南", brand: [], cityKeys: ["成都"], provinceKeys: ["四川"] },
   { city: "西安", region: "西北", brand: ["朱雀", "欣桥"], cityKeys: ["西安"], provinceKeys: ["陕西"] },
   { city: "沈阳", region: "东北", brand: ["盛发", "十二线"], cityKeys: ["沈阳"], provinceKeys: ["辽宁"] },
+  { city: "重庆", region: "西南", brand: ["双福"], cityKeys: ["重庆"], provinceKeys: [] },
+  { city: "长沙", region: "华中", brand: ["马王堆"], cityKeys: ["长沙"], provinceKeys: ["湖南"] },
+  { city: "南京", region: "华东", brand: ["众彩", "物流配送中心"], cityKeys: ["南京"], provinceKeys: ["江苏"] },
+  { city: "天津", region: "华北", brand: ["韩家墅", "金钟"], cityKeys: ["天津"], provinceKeys: [] },
 ]
-const PINYIN = { 北京: "bj", 上海: "sh", 广州: "gz", 深圳: "sz", 杭州: "hz", 郑州: "zz", 武汉: "wh", 成都: "cd", 西安: "xa", 沈阳: "sy" }
+const PINYIN = { 北京: "bj", 上海: "sh", 广州: "gz", 杭州: "hz", 郑州: "zz", 武汉: "wh", 成都: "cd", 西安: "xa", 沈阳: "sy", 重庆: "cq", 长沙: "cs", 南京: "nj", 天津: "tj" }
 
 function marketIdOf(city, name) {
   const hash = crypto.createHash("md5").update(name, "utf8").digest("hex").slice(0, 8)

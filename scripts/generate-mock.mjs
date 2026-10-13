@@ -1,4 +1,4 @@
-// 生成 mock 数据:20 种农产品 × 10 个市场 × 90 天价格记录
+// 生成 mock 数据:30 种农产品 × 13 个市场 × 90 天价格记录
 // 用法:node scripts/generate-mock.mjs(固定种子,结果可复现)
 import { writeFileSync, mkdirSync } from "node:fs"
 import path from "node:path"
@@ -27,14 +27,24 @@ const products = [
   { id: "tomato", name: "西红柿", category: "蔬菜", basePrice: 6.5 },
   { id: "cucumber", name: "黄瓜", category: "蔬菜", basePrice: 4.8 },
   { id: "potato", name: "土豆", category: "蔬菜", basePrice: 3.2 },
+  { id: "celery", name: "芹菜", category: "蔬菜", basePrice: 3.6 },
+  { id: "chives", name: "韭菜", category: "蔬菜", basePrice: 4.6 },
+  { id: "carrot", name: "胡萝卜", category: "蔬菜", basePrice: 2.8 },
+  { id: "spinach", name: "菠菜", category: "蔬菜", basePrice: 4.6 },
+  { id: "scallion", name: "大葱", category: "蔬菜", basePrice: 3.8 },
+  { id: "lettuce", name: "生菜", category: "蔬菜", basePrice: 4.2 },
+  { id: "eggplant", name: "茄子", category: "蔬菜", basePrice: 4.2 },
+  { id: "cauliflower", name: "菜花", category: "蔬菜", basePrice: 4.2 },
+  { id: "lotus_root", name: "莲藕", category: "蔬菜", basePrice: 6.5 },
+  { id: "ginger", name: "生姜", category: "蔬菜", basePrice: 9.0 },
+  { id: "winter_melon", name: "冬瓜", category: "蔬菜", basePrice: 2.2 },
+  { id: "long_bean", name: "豆角", category: "蔬菜", basePrice: 5.6 },
   { id: "apple", name: "苹果", category: "水果", basePrice: 8.5 },
   { id: "banana", name: "香蕉", category: "水果", basePrice: 5.6 },
-  { id: "orange", name: "橙子", category: "水果", basePrice: 7.2 },
+  { id: "grape", name: "葡萄", category: "水果", basePrice: 9.5 },
   { id: "watermelon", name: "西瓜", category: "水果", basePrice: 3.0 },
   { id: "rice", name: "大米", category: "粮油", basePrice: 5.8 },
-  { id: "wheat", name: "小麦", category: "粮油", basePrice: 2.9 },
   { id: "corn", name: "玉米", category: "粮油", basePrice: 2.6 },
-  { id: "peanut", name: "花生", category: "粮油", basePrice: 9.5 },
   { id: "pork", name: "猪肉", category: "肉禽蛋", basePrice: 24.0 },
   { id: "beef", name: "牛肉", category: "肉禽蛋", basePrice: 68.0 },
   { id: "mutton", name: "羊肉", category: "肉禽蛋", basePrice: 62.0 },
@@ -49,13 +59,16 @@ const markets = [
   { id: "bj_xinfadi", name: "北京新发地批发市场", city: "北京", region: "华北", factor: 1.08 },
   { id: "sh_jiangqiao", name: "上海江桥批发市场", city: "上海", region: "华东", factor: 1.15 },
   { id: "gz_jiangnan", name: "广州江南果菜批发市场", city: "广州", region: "华南", factor: 1.05 },
-  { id: "sz_haijixing", name: "深圳海吉星农批市场", city: "深圳", region: "华南", factor: 1.12 },
   { id: "hz_nongdu", name: "杭州农副产品物流中心", city: "杭州", region: "华东", factor: 1.06 },
   { id: "zz_wanbang", name: "郑州万邦国际农产品物流城", city: "郑州", region: "华中", factor: 0.97 },
   { id: "wh_baishazhou", name: "武汉白沙洲农副产品大市场", city: "武汉", region: "华中", factor: 0.95 },
   { id: "cd_sanlian", name: "成都农产品中心批发市场", city: "成都", region: "西南", factor: 0.98 },
   { id: "xa_xinqiao", name: "西安欣桥农产品批发市场", city: "西安", region: "西北", factor: 0.94 },
   { id: "sy_shierxian", name: "沈阳十二线蔬菜批发市场", city: "沈阳", region: "东北", factor: 0.92 },
+  { id: "cq_shuangfu", name: "重庆双福国际农贸城", city: "重庆", region: "西南", factor: 0.96 },
+  { id: "cs_mawangdui", name: "长沙马王堆农产品市场", city: "长沙", region: "华中", factor: 0.99 },
+  { id: "nj_zhongcai", name: "南京农副产品物流配送中心", city: "南京", region: "华东", factor: 1.03 },
+  { id: "tj_jinzhong", name: "天津金钟河蔬菜贸易中心", city: "天津", region: "华北", factor: 1.04 },
 ]
 
 // 每个产品独立的波动参数,让曲线形态各异

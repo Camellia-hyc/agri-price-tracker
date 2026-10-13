@@ -24,6 +24,78 @@
     "basePrice": 3.2
   },
   {
+    "id": "celery",
+    "name": "芹菜",
+    "category": "蔬菜",
+    "basePrice": 3.6
+  },
+  {
+    "id": "chives",
+    "name": "韭菜",
+    "category": "蔬菜",
+    "basePrice": 4.6
+  },
+  {
+    "id": "carrot",
+    "name": "胡萝卜",
+    "category": "蔬菜",
+    "basePrice": 2.8
+  },
+  {
+    "id": "spinach",
+    "name": "菠菜",
+    "category": "蔬菜",
+    "basePrice": 4.6
+  },
+  {
+    "id": "scallion",
+    "name": "大葱",
+    "category": "蔬菜",
+    "basePrice": 3.8
+  },
+  {
+    "id": "lettuce",
+    "name": "生菜",
+    "category": "蔬菜",
+    "basePrice": 4.2
+  },
+  {
+    "id": "eggplant",
+    "name": "茄子",
+    "category": "蔬菜",
+    "basePrice": 4.2
+  },
+  {
+    "id": "cauliflower",
+    "name": "菜花",
+    "category": "蔬菜",
+    "basePrice": 4.2
+  },
+  {
+    "id": "lotus_root",
+    "name": "莲藕",
+    "category": "蔬菜",
+    "basePrice": 6.5
+  },
+  {
+    "id": "ginger",
+    "name": "生姜",
+    "category": "蔬菜",
+    "basePrice": 9
+  },
+  {
+    "id": "winter_melon",
+    "name": "冬瓜",
+    "category": "蔬菜",
+    "basePrice": 2.2
+  },
+  {
+    "id": "long_bean",
+    "name": "豆角",
+    "category": "蔬菜",
+    "basePrice": 5.6
+  },
+  {
     "id": "apple",
     "name": "苹果",
     "category": "水果",
@@ -36,10 +108,10 @@
     "basePrice": 5.6
   },
   {
-    "id": "orange",
-    "name": "橙子",
+    "id": "grape",
+    "name": "葡萄",
     "category": "水果",
-    "basePrice": 7.2
+    "basePrice": 9.5
   },
   {
     "id": "watermelon",
@@ -54,22 +126,10 @@
     "basePrice": 5.8
   },
   {
-    "id": "wheat",
-    "name": "小麦",
-    "category": "粮油",
-    "basePrice": 2.9
-  },
-  {
     "id": "corn",
     "name": "玉米",
     "category": "粮油",
     "basePrice": 2.6
-  },
-  {
-    "id": "peanut",
-    "name": "花生",
-    "category": "粮油",
-    "basePrice": 9.5
   },
   {
     "id": "pork",
