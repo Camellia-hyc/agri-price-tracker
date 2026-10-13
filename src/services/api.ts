@@ -63,3 +63,8 @@ export async function getPrices(query: PriceQuery = {}): Promise<PriceRecord[]> 
   }
   return filterPrices(pricesCache, query)
 }
+
+// 管理员后台改价后调用:丢弃模块级缓存,让下一次无参 getPrices 重新拉取
+export function clearPricesCache(): void {
+  pricesCache = null
+}
