@@ -212,7 +212,7 @@ export default function TrendAnalysis() {
       return n > 0 ? sum / n : null
     }
 
-    for (const p of selectedProducts) {
+    for (const [pi, p] of selectedProducts.entries()) {
       const prodValues = sortedDates.map((d) => avgOf(byDate.get(d)?.get(p.id)))
       const nums = prodValues.filter((v): v is number => v !== null)
       if (nums.length === 0) continue
@@ -234,10 +234,13 @@ export default function TrendAnalysis() {
         series.push({
           name: seriesName(p.name, ALL_MARKETS_LABEL, selectedProducts.length, 1),
           values: prodValues,
+          colorIndex: pi,
+          dashIndex: 0,
         })
       } else {
-        // 具体市场口径:每产品 × 每市场一条,全空的系列跳过
-        for (const m of selectedMarkets) {
+        // 具体市场口径:每产品 × 每市场一条,全空的系列跳过。
+        // 复合编码:色相 = 产品,线型 = 市场 —— 3×3=9 条线也不新增颜色、不循环取色
+        for (const [mi, m] of selectedMarkets.entries()) {
           const values = sortedDates.map(
             (d) => byDate.get(d)?.get(p.id)?.get(m.id) ?? null,
           )
@@ -250,6 +253,8 @@ export default function TrendAnalysis() {
               selectedMarkets.length,
             ),
             values,
+            colorIndex: pi,
+            dashIndex: mi,
           })
         }
       }
@@ -290,7 +295,7 @@ export default function TrendAnalysis() {
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
       <div>
-        <h1 className="text-2xl font-bold">趋势分析</h1>
+        <h1 className="text-2xl font-bold tracking-tight">趋势分析</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           对比所选市场内不同农产品的价格走势
           {availableDays > 0 ? `(当前数据覆盖最近 ${availableDays} 天)` : ""}

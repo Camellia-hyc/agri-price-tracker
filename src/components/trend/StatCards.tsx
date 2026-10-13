@@ -1,5 +1,6 @@
 import { Minus, TrendingDown, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import Sparkline from "@/components/shared/Sparkline"
 import { cn } from "@/lib/utils"
 import type { Product } from "@/types/product"
 
@@ -31,61 +32,74 @@ export default function StatCards({
         const up = d.changePct > 0
         const down = d.changePct < 0
         return (
-          <Card key={d.product.id}>
+          <Card
+            key={d.product.id}
+            className="transition-all hover:-translate-y-0.5 hover:shadow-card-hover"
+          >
             <CardContent className="space-y-3 pt-6">
               <div className="flex items-center justify-between">
-                <span className="font-medium">{d.product.name}</span>
-                <span className="text-xs text-muted-foreground">
+                <span className="font-semibold">{d.product.name}</span>
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                   {d.product.category}
                 </span>
               </div>
 
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold tabular-nums">
+              <div className="flex items-baseline gap-1.5">
+                {/* 大号独立数字用比例数字,更紧凑 */}
+                <span className="text-3xl font-bold tracking-tight">
                   {d.latest.toFixed(2)}
                 </span>
                 <span className="text-xs text-muted-foreground">元/公斤</span>
               </div>
 
               {/* 国内行情习惯:红涨绿跌 */}
-              <div
-                className={cn(
-                  "inline-flex items-center gap-1 text-sm font-medium",
-                  up && "text-destructive",
-                  down && "text-primary",
-                  !up && !down && "text-muted-foreground",
-                )}
-              >
-                {up ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : down ? (
-                  <TrendingDown className="h-4 w-4" />
-                ) : (
-                  <Minus className="h-4 w-4" />
-                )}
-                {up ? "+" : ""}
-                {d.changePct.toFixed(1)}%
-                <span className="ml-1 text-xs font-normal text-muted-foreground">
-                  区间涨跌
+              <div className="flex items-center justify-between gap-2">
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-sm font-semibold tabular-nums",
+                    up && "bg-rise/10 text-rise",
+                    down && "bg-fall/10 text-fall",
+                    !up && !down && "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {up ? (
+                    <TrendingUp className="h-4 w-4" />
+                  ) : down ? (
+                    <TrendingDown className="h-4 w-4" />
+                  ) : (
+                    <Minus className="h-4 w-4" />
+                  )}
+                  {up ? "+" : ""}
+                  {d.changePct.toFixed(1)}%
                 </span>
+                <span className="text-xs text-muted-foreground">区间涨跌</span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 border-t pt-3 text-center">
+              {/* 区间走势迷你线,端点 = 当前值方向 */}
+              <Sparkline
+                values={d.values}
+                height={40}
+                accentClassName={
+                  up ? "bg-rise" : down ? "bg-fall" : "bg-muted-foreground"
+                }
+              />
+
+              <div className="grid grid-cols-3 gap-2 border-t border-border/70 pt-3 text-center">
                 <div>
                   <div className="text-xs text-muted-foreground">最高</div>
-                  <div className="mt-0.5 text-sm font-medium tabular-nums">
+                  <div className="mt-0.5 text-sm font-semibold tabular-nums">
                     {d.max.toFixed(2)}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">最低</div>
-                  <div className="mt-0.5 text-sm font-medium tabular-nums">
+                  <div className="mt-0.5 text-sm font-semibold tabular-nums">
                     {d.min.toFixed(2)}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">均价</div>
-                  <div className="mt-0.5 text-sm font-medium tabular-nums">
+                  <div className="mt-0.5 text-sm font-semibold tabular-nums">
                     {d.avg.toFixed(2)}
                   </div>
                 </div>

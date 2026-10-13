@@ -1,9 +1,9 @@
 import { CalendarRange, Store } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import type { Product } from "@/types/product"
 import type { Market } from "@/types/market"
 import ProductPicker from "@/components/shared/ProductPicker"
+import PickerChip from "@/components/shared/PickerChip"
 import { cn } from "@/lib/utils"
 import {
   ALL_MARKETS_ID,
@@ -58,10 +58,12 @@ export default function TrendFilter({
           onToggle={onProductToggle}
         />
 
-        {/* 市场多选:「全国均价」与真实城市互斥(页面侧保证),上限 3 */}
-        <div>
-          <div className="mb-2 flex items-center gap-1.5 text-sm font-medium">
-            <Store className="h-4 w-4 text-primary" />
+        <div className="border-t border-border/60 pt-5">
+          {/* 市场多选:「全国均价」与真实城市互斥(页面侧保证),上限 3 */}
+          <div className="mb-2.5 flex items-center gap-1.5 text-sm font-medium">
+            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 text-primary">
+              <Store className="h-3.5 w-3.5" />
+            </span>
             选择市场
             <span className="ml-auto text-xs font-normal text-muted-foreground">
               {allMarketsSelected
@@ -70,26 +72,21 @@ export default function TrendFilter({
             </span>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            <Button
-              size="sm"
-              variant={allMarketsSelected ? "default" : "outline"}
-              aria-pressed={allMarketsSelected}
+            <PickerChip
+              selected={allMarketsSelected}
               onClick={() => onMarketToggle(ALL_MARKETS_ID)}
               title={`全部 ${markets.length} 个市场的每日期均价`}
-              className="h-7 px-2.5 text-xs"
             >
               {ALL_MARKETS_LABEL}
-            </Button>
+            </PickerChip>
             {markets.map((m) => {
               const selected = selectedMarketIds.includes(m.id)
               const disabled =
                 !selected && selectedMarketIds.length >= TREND_MAX_MARKETS
               return (
-                <Button
+                <PickerChip
                   key={m.id}
-                  size="sm"
-                  variant={selected ? "default" : "outline"}
-                  aria-pressed={selected}
+                  selected={selected}
                   disabled={disabled}
                   onClick={() => onMarketToggle(m.id)}
                   title={
@@ -97,22 +94,23 @@ export default function TrendFilter({
                       ? `最多选择 ${TREND_MAX_MARKETS} 个市场,先取消一个再选`
                       : m.name
                   }
-                  className="h-7 px-2.5 text-xs"
                 >
                   {m.city}
-                </Button>
+                </PickerChip>
               )
             })}
           </div>
         </div>
 
-        {/* 时间范围:超出数据实际覆盖天数的档位置灰 */}
-        <div>
-          <div className="mb-2 flex items-center gap-1.5 text-sm font-medium">
-            <CalendarRange className="h-4 w-4 text-primary" />
+        <div className="border-t border-border/60 pt-5">
+          {/* 时间范围:超出数据实际覆盖天数的档位置灰 */}
+          <div className="mb-2.5 flex items-center gap-1.5 text-sm font-medium">
+            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 text-primary">
+              <CalendarRange className="h-3.5 w-3.5" />
+            </span>
             时间范围
           </div>
-          <div className="inline-flex rounded-md bg-muted p-0.5">
+          <div className="inline-flex rounded-lg border border-border/70 bg-muted/70 p-0.5">
             {RANGES.map((r) => {
               const disabled = availableDays > 0 && r.days > availableDays
               return (
@@ -122,9 +120,9 @@ export default function TrendFilter({
                   disabled={disabled}
                   title={disabled ? `数据仅覆盖最近 ${availableDays} 天` : undefined}
                   className={cn(
-                    "rounded-md px-3 py-1 text-xs font-medium transition-colors",
+                    "rounded-md px-3 py-1.5 text-xs font-medium transition-all",
                     rangeDays === r.days
-                      ? "bg-background text-foreground shadow-sm"
+                      ? "bg-card text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground",
                     disabled &&
                       "cursor-not-allowed opacity-40 hover:text-muted-foreground",
