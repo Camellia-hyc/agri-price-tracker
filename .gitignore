@@ -5,3 +5,6 @@ dist
 
 # Crawlee 运行时状态(临时文件)
 storage
+
+# 本地 SQLite 数据库(后端 server/,由 npm run server:seed 重建)
+server/*.sqlite*
