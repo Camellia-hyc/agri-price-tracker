@@ -1,0 +1,68 @@
+name: deploy-pages
+
+on:
+  push:
+    branches: [master]
+  workflow_run:
+    # 爬虫用 GITHUB_TOKEN 提交,GitHub 不会让这种提交触发 on: push,
+    # 因此在 daily-crawl 完成后用 workflow_run 兜住每日数据部署
+    workflows: [daily-crawl]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    # 爬虫失败(未产出数据提交)时跳过,避免无谓部署
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # workflow_run 事件默认取的是爬虫运行前的旧 SHA,必须显式取 master 最新
+          ref: master
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE: /agri-price-tracker/
+
+      - name: SPA fallback
+        # GitHub Pages 没有 SPA 重写规则,复制 index.html 为 404.html 兜住深链接
+        run: cp dist/index.html dist/404.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v4
