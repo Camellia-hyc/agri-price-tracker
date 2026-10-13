@@ -5,6 +5,8 @@ export interface PriceRecord {
   date: string
   /** 元/公斤 */
   price: number
+  /** 1 = 官方上报真值;缺省 = 模拟数据(爬虫合并时写入) */
+  real?: number
 }
 
 export interface PriceQuery {

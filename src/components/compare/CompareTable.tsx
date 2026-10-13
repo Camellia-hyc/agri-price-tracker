@@ -70,17 +70,17 @@ export default function CompareTable({ data, products }: CompareTableProps) {
       ? `按${p.name}价格${sortDir === "asc" ? "降序" : "升序"}排列`
       : `按${p.name}价格排序(升序,最便宜在前)`
 
-  // 每列的最低价/最高价,用于标色
+  // 每列的最低价/最高价,用于标色。无数据格(null)必须剔除——
+  // 之前 `?? 0` 会把空档当 0 元参与计算,是颗哑弹
   const colMinMax = useMemo(
     () =>
       products.map((p) => {
-        const prices = data.map(
-          (d) => d.prices.find((x) => x.product.id === p.id)?.price ?? 0,
-        )
-        return {
-          min: Math.min(...prices),
-          max: Math.max(...prices),
-        }
+        const prices = data
+          .map((d) => d.prices.find((x) => x.product.id === p.id)?.price ?? null)
+          .filter((v): v is number => v !== null)
+        return prices.length > 0
+          ? { min: Math.min(...prices), max: Math.max(...prices) }
+          : { min: null, max: null }
       }),
     [data, products],
   )
@@ -88,10 +88,10 @@ export default function CompareTable({ data, products }: CompareTableProps) {
   const colAvg = useMemo(
     () =>
       products.map((p) => {
-        const prices = data.map(
-          (d) => d.prices.find((x) => x.product.id === p.id)?.price ?? 0,
-        )
-        return prices.reduce((s, v) => s + v, 0) / prices.length
+        const prices = data
+          .map((d) => d.prices.find((x) => x.product.id === p.id)?.price ?? null)
+          .filter((v): v is number => v !== null)
+        return prices.length > 0 ? prices.reduce((s, v) => s + v, 0) / prices.length : null
       }),
     [data, products],
   )
@@ -149,7 +149,7 @@ export default function CompareTable({ data, products }: CompareTableProps) {
             </TableCell>
             {d.prices.map((x, i) => {
               const { min, max } = colMinMax[i]
-              const highlight = min !== max && x.price !== null
+              const highlight = min !== null && max !== null && min !== max && x.price !== null
               const isMin = highlight && x.price === min
               const isMax = highlight && x.price === max
               return (
@@ -159,12 +159,18 @@ export default function CompareTable({ data, products }: CompareTableProps) {
                   ) : (
                     <span
                       className={cn(
-                        "inline-block min-w-[3.75rem] rounded-md px-2 py-0.5 tabular-nums",
+                        "inline-flex min-w-[3.75rem] items-center justify-end gap-1 rounded-md px-2 py-0.5 tabular-nums",
                         isMin && "bg-fall/10 font-semibold text-fall",
                         isMax && "bg-rise/10 font-semibold text-rise",
-                        !isMin && !isMax && "px-2",
                       )}
                     >
+                      {x.real && (
+                        <span
+                          aria-label="官方上报真值"
+                          title="官方上报真值"
+                          className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/80"
+                        />
+                      )}
                       {x.price.toFixed(2)}
                     </span>
                   )}
@@ -187,7 +193,7 @@ export default function CompareTable({ data, products }: CompareTableProps) {
               key={products[i].id}
               className="text-right font-semibold tabular-nums"
             >
-              {avg.toFixed(2)}
+              {avg === null ? "—" : avg.toFixed(2)}
             </TableCell>
           ))}
         </TableRow>

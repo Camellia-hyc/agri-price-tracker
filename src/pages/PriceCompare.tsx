@@ -129,9 +129,9 @@ export default function PriceCompare() {
     [selectedMarketIds, markets],
   )
 
-  // 选中日期的价格:marketId -> productId -> price
+  // 选中日期的价格:marketId -> productId -> {price, real}
   const priceMap = useMemo(() => {
-    const map = new Map<string, Map<string, number>>()
+    const map = new Map<string, Map<string, { price: number; real: boolean }>>()
     if (!allPrices || !date) return map
     for (const r of allPrices) {
       if (r.date !== date) continue
@@ -142,7 +142,7 @@ export default function PriceCompare() {
         m = new Map()
         map.set(r.marketId, m)
       }
-      m.set(r.productId, r.price)
+      m.set(r.productId, { price: r.price, real: r.real === 1 })
     }
     return map
   }, [allPrices, date, selectedProductIds, selectedMarketIds])
@@ -151,10 +151,10 @@ export default function PriceCompare() {
     () =>
       selectedMarkets.map((m) => ({
         market: m,
-        prices: selectedProducts.map((p) => ({
-          product: p,
-          price: priceMap.get(m.id)?.get(p.id) ?? null,
-        })),
+        prices: selectedProducts.map((p) => {
+          const cell = priceMap.get(m.id)?.get(p.id)
+          return { product: p, price: cell?.price ?? null, real: cell?.real ?? false }
+        }),
       })),
     [selectedMarkets, selectedProducts, priceMap],
   )
@@ -215,7 +215,7 @@ export default function PriceCompare() {
                 <CardHeader>
                   <CardTitle>价格明细</CardTitle>
                   <CardDescription>
-                    单位:元/公斤 · 绿色为当日最低价,红色为当日最高价 · 点击品种表头排序
+                    单位:元/公斤 · 绿色为当日最低价,红色为当日最高价 · 点击品种表头排序 · 带小圆点的为官方上报真值
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

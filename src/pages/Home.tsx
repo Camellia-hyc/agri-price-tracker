@@ -52,6 +52,12 @@ export default function Home() {
     }
   }, [])
 
+  // 官方真值条数(爬虫给真值记录打了 real 标记):首页成色徽章用
+  const realCount = useMemo(
+    () => (allPrices ? allPrices.filter((r) => r.real === 1).length : 0),
+    [allPrices],
+  )
+
   // 首页内锚点跳转(搜索框的"价格异动榜 / 分类浏览")。
   // 依赖 products/allPrices:目标区块尚未渲染时,数据到达后本 effect 会自动重试
   useEffect(() => {
@@ -166,6 +172,15 @@ export default function Home() {
             <span className="inline-flex items-center rounded-full border border-border/70 bg-card px-3 py-1 shadow-sm">
               {products.length} 个常用品种
             </span>
+            {realCount > 0 && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card px-3 py-1 shadow-sm"
+                title="来自农业农村部全国农产品批发市场价格信息系统的每日上报;接口不提供历史回溯,展示层其余价格为演示用模拟数据"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-primary/80" />
+                官方真值 {realCount.toLocaleString()} 条
+              </span>
+            )}
             {lastDate && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 font-medium text-primary shadow-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-primary" />

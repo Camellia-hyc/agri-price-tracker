@@ -9,7 +9,7 @@ import type { Market } from "@/types/market"
 
 export interface CompareDatum {
   market: Market
-  prices: { product: Product; price: number | null }[]
+  prices: { product: Product; price: number | null; real?: boolean }[]
 }
 
 interface CompareChartProps {
